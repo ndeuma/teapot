@@ -92,7 +92,7 @@ var teapot = {
 				console.log(event, request, options, thrownError); 
 			});			
 			$("#username").html("You are " + user.screen_name + ".");					
-			teapot.showHomeTimeline();			
+			teapot.showPublicTimeline();			
 		});
 	},
 	
