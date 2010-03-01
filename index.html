@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>teapot - A 100% HTML5 Twitter client</title>
+		<link rel="stylesheet" type="text/css" href="teapot.css" />
+		<script type="text/javascript" src="jquery/jquery-1.4.2.js"></script>
+		<script type="text/javascript" src="jquery/jquery-ui-1.8rc2.js"></script>
+		<script type="text/javascript" src="teapot.js"></script>
+		<script type="text/javascript">
+		$(function() {			
+			teapot.init();			
+		});
+		</script>
+	</head>
+	<body>
+		<div class="menubar">
+			<a class="menuitem" href="javascript:teapot.showAbout();">ABOUT</a>
+		</div>
+		<div id="username"></div>				
+		<div id="tweetlengthbox">You have 140 characters remaining for your tweet.</div>				
+		<div id="tweetboxcontainer">	
+			<form action="" onsubmit="return teapot.sendTweet();">
+				<textarea cols="70" rows="2" id="tweettextbox" onkeyup="teapot.handleTweetTextBoxChanged()"></textarea>
+				<input type="submit" id="tweetbutton" value="Tweet" />
+			</form>				
+		</div>	
+		<div class="menubar">
+			<a class="menuitem" href="javascript:teapot.showPublicTimeline()">PUBLIC</a> -
+			<a class="menuitem" href="javascript:teapot.showHomeTimeline()">HOME</a> - 
+			<a class="menuitem" href="javascript:teapot.showMyTimeline()">ME</a> -	
+			<a class="menuitem" href="javascript:teapot.showAnyUserTimeline()">USER</a> -			
+			<a class="menuitem" class="menuitem" href="javascript:teapot.showMentions()">REPLIES</a> -
+			<a class="menuitem" href="javascript:teapot.showFavorites()">FAVS</a> -					
+			<a class="menuitem" href="javascript:teapot.doSearch()">SEARCH</a>
+		</div>		
+		<div id="waitmessage">Please wait...</div>	
+		<div id="tweetlist" />
+		<div id="footer">
+			<span id="requestsremaining"></span>
+		</div>
+	</body>
+</html>

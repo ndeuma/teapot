@@ -1,0 +1,114 @@
+body {
+	font-family: sans-serif;		
+	background-color:#FFFFFF;
+}
+
+#waitmessage {
+	display:none;
+	padding:50px;
+	margin:50px;
+	font-size:xx-large;
+	background-color:#ffffe0;
+	position:absolute;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	-border-radius:5px;
+	filter:alpha(opacity=70);
+	opacity: 0.7;
+	-moz-opacity:0.7;
+}
+
+#searchinput {
+	display:inline;
+}
+
+#searchtextbox[class=unfocused] {	
+	color:#e5e5e5;
+	font-weight:bold;
+}
+
+#searchtextbox[class=focused] {	
+	color:#000000;
+	font-weight:bold;
+}
+
+#tweetboxcontainer {
+	margin-top:10px;
+}
+
+#tweettextbox {
+	border:1px solid black;
+	font-family:sans-serif;
+}
+
+.menubar {
+	background-color:#e5e5e5;
+	padding:5px;
+}
+
+.menuitem {
+	font-weight:bold;
+	text-decoration:none;
+}
+
+a:hover {
+	text-decoration:underline;
+}
+
+#tweetlist {		
+}
+
+.tweetcontents {
+	padding:15px;
+	border-bottom:2px solid #e5e5e5;
+}
+
+.tweetcontents.evenhour {
+	background-color:#FFFFFF;
+} 
+
+.tweetcontents.oddhour {
+	background-color:#F0F0F0;
+}
+
+.tweetcontents.mytweet {
+	border-left:4px solid #00ff00; 	
+} 
+
+
+.avatar {
+	border:0px;
+	float:left;
+	padding-right:1em;
+}
+
+.tweetusername {	
+	font-weight: bold;
+	color:#0000FF;
+}
+
+.tweettext {	
+}
+
+.hashtag, .username, .extlink {
+	color:#0000FF;
+}
+
+.tweetmeta, .tweetactions {	
+	color:#4d4d4d;;
+	font-size:x-small;
+}
+
+#tweetlist a {
+	text-decoration:none;
+}
+
+.userprofile {	
+	padding:15px;
+}
+
+
+.description {
+	display:inline;
+	font-style:italic;	
+}
