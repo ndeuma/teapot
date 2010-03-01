@@ -114,8 +114,7 @@ var teapot = {
 		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus);	
 	},
 	
-	showHomeTimeline : function() {
-		teapot.currentTimeline = "home";
+	showHomeTimeline : function() {		
 		$.getJSON(teapot.getTimelineUrl("home"), teapot.renderStatuses);	
 		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus);
 	},
@@ -130,8 +129,7 @@ var teapot = {
 			teapot.showUserTimelineByName(userName);
 	},
 	
-	showUserTimeline : function(userId) {
-		teapot.currentTimeline = "user";
+	showUserTimeline : function(userId) {		
 		$.getJSON(teapot.getTimelineUrl("user", userId), teapot.renderStatuses);	
 		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus)
 	},	
