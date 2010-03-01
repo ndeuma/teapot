@@ -190,11 +190,11 @@ var teapot = {
 	
 	renderStatuses : function(statuses, isSearchResult) {
 		// statuses is a list of tweets
-		if (statuses.length > 1) 
+		if (statuses.length) 
 			$("#tweetlist").html($.map(statuses, function(status) {
 				return teapot.formatTweet(new TweetWrapper(status, isSearchResult));
 			}).join(""));					
-		else if (statuses.length == 1) // statuses is a single tweet 											
+		else  											
 			$("#tweetlist").html(teapot.formatTweet(new TweetWrapper(statuses, isSearchResult)));
 	},
 	
@@ -267,9 +267,7 @@ var teapot = {
 	},
 	
 	replaceRegexps : function(tweetText) {	
-		tweetText = tweetText.replace(/(@(\w+))/g, '@<a class="username" href="javascript:teapot.showUserTimelineByName(\'$2\')">$2</a>');
-		// Matches all characters from the "Basic Latin" and "Latin-1 Supplements" unicode blocks. 
-		// Check http://kourge.net/projects/regexp-unicode-block 
+		tweetText = tweetText.replace(/(@(\w+))/g, '@<a class="username" href="javascript:teapot.showUserTimelineByName(\'$2\')">$2</a>'); 
 		tweetText = tweetText.replace(/(#\w+)/g, '<a class="hashtag" href="javascript:teapot.showHashTag(\'$1\')">$1</a>');	
 		tweetText = tweetText.replace(/(https?:\/\/[\w.\/-~\-&]+)/g, '<a class="extlink" target="_blank" href="$1">$1</a>');
 		return tweetText;
