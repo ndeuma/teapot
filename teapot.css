@@ -5,14 +5,18 @@ body {
 
 #waitmessage {
 	display:none;
-	padding:50px;
-	margin:50px;
+	padding:50px;	
+	width:10em;
+	margin:0px auto;	
 	font-size:xx-large;
 	background-color:#ffffe0;
-	position:absolute;
-	-moz-border-radius:5px;
-	-webkit-border-radius:5px;
-	-border-radius:5px;
+	text-align:center;
+	position:fixed;
+	left:50px;	
+	right:50px;		
+	-moz-border-radius:20px;
+	-webkit-border-radius:20px;
+	-border-radius:20px;
 	filter:alpha(opacity=70);
 	opacity: 0.7;
 	-moz-opacity:0.7;
