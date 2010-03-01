@@ -221,10 +221,9 @@ var teapot = {
 	
 	formatTweet : function(tweet) {		
 		var result;		
-		var dateTime = new Date(tweet.getCreatedAt());
-		var colorClass = teapot.calcColorClass(dateTime);
+		var dateTime = new Date(tweet.getCreatedAt());		
 		var authorClass = teapot.calcAuthorClass(tweet);
-		result = "<div class=\"tweetcontents " + colorClass + " " + authorClass +"\" id=\"_tweetcontents_" + tweet.getId() + "\">";
+		result = "<div class=\"tweetcontents " + authorClass +"\" id=\"_tweetcontents_" + tweet.getId() + "\">";
 		result += "<a href=\"javascript:teapot.showUserProfile('" + tweet.getUserId() + "', '" + tweet.getUserScreenName() + "')\">"	
 		result += "<img class=\"avatar\" src=\"" + tweet.getUserProfileImageUrl() + 
 			"\" width=\"40\" height=\"40\" alt=\" Profile image of " + tweet.getUserScreenName() + "\"/>";
@@ -242,11 +241,6 @@ var teapot = {
 		result += " | <a href='javascript:teapot.replyToTweet(\"" + tweet.getId() + "\", \"" + tweet.getUserScreenName() + "\")'>REPLY</a>"
 		result += "</span></div>";
 		return result;
-	},
-	
-	calcColorClass : function(tweetDate) {		
-		return ((new Date().getHours() - tweetDate.getHours()) % 2 == 0) ?
-			"evenhour" : "oddhour";
 	},
 	
 	calcAuthorClass : function(tweet) {
