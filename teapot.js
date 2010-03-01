@@ -96,7 +96,7 @@ var teapot = {
 				console.log(event, request, options, thrownError); 
 			});			
 			$("#username").html("You are " + user.screen_name + ".");					
-			teapot.showPublicTimeline();			
+			teapot.showHomeTimeline();			
 		});
 	},
 	
@@ -194,7 +194,7 @@ var teapot = {
 	
 	renderStatuses : function(statuses, isSearchResult) {
 		// statuses is a list of tweets
-		if (statuses.length) 
+		if (statuses.length != undefined) 
 			$("#tweetlist").html($.map(statuses, function(status) {
 				return teapot.formatTweet(new TweetWrapper(status, isSearchResult));
 			}).join(""));					
