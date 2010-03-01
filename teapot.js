@@ -184,12 +184,6 @@ var teapot = {
 		}	
 	},
 	
-	nextPage : function() {					
-	},
-	
-	previousPage : function() {		
-	},
-	
 	renderStatuses : function(statuses, isSearchResult) {
 		// statuses is a list of tweets
 		if (statuses.length != undefined) 
