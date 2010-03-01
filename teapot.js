@@ -66,6 +66,8 @@ var teapot = {
 		}
 	},
 	
+	DEFAULT_LENGTH_MESSAGE : "You have 140 characters remaining for your tweet.",	
+	
 	currentUser : null,
 	
 	currentTweetProperties : {
@@ -83,8 +85,10 @@ var teapot = {
 		return (teapot.r() + teapot.r() + "-" + teapot.r() + "-" + teapot.r() + "-" + teapot.r() + "-" + teapot.r() + teapot.r() + teapot.r());
 	},
 
-	init : function() {		
-		$.getJSON(teapot.PROTOCOL + "api.twitter.com/1/account/verify_credentials.json?callback=?", function(user){
+	init : function() {
+		$("#tweetlengthbox").html(teapot.DEFAULT_LENGTH_MESSAGE);	
+		$("#tweettextbox").bind("keyup click", teapot.handleTweetTextBoxChanged)	
+		$.getJSON(teapot.PROTOCOL + "api.twitter.com/1/account/verify_credentials.json?callback=?", function(user){			
 			teapot.currentUser = user;
 			$("#waitmessage").ajaxStart(function(){ $("#waitmessage").show(); });
 			$("#waitmessage").ajaxStop(function(){ $("#waitmessage").hide(); });						
@@ -267,7 +271,7 @@ var teapot = {
 		return tweetText;
 	},
 	
-	handleTweetTextBoxChanged : function() {
+	handleTweetTextBoxChanged : function(event) {
 		var length = $("#tweettextbox").val().length;
 		if (length > 140) {
 			$("#tweettextbox").attr(teapot.INPUT_BOX_STYLES["too_long"]);
@@ -326,8 +330,10 @@ var teapot = {
 	handleTweetPosted : function(event) {		
 		// Remove the target frame that received the response to the POST request
 		$(event.target).remove();
-		teapot.currentTweetProperties.replyToId = null;
+		teapot.currentTweetProperties.replyToId = null;				
 		$("#tweettextbox").val("");
+		$("#tweettextbox").attr(teapot.INPUT_BOX_STYLES["normal"]);
+		$("#tweetlengthbox").html(teapot.DEFAULT_LENGTH_MESSAGE);
 		teapot.showHomeTimeline();
 	},
 	
