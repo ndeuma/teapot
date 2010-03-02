@@ -171,6 +171,12 @@ var teapot = {
 		$("#tweettextbox").val("@" + userName + " ").focus();
 	},
 	
+	retweet : function(tweetId) {
+		if (window.confirm("Retweet to your followers?")) {
+			teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/statuses/retweet/" + tweetId + ".xml", { }, teapot.handleTweetPosted);
+		}		
+	},
+	
 	doSearch : function() {		
 		var searchTerm = window.prompt("Enter a search query:", "");
 		if (searchTerm != null) {
@@ -218,7 +224,7 @@ var teapot = {
 	formatTweet : function(tweet) {		
 		var result;		
 		var dateTime = new Date(tweet.getCreatedAt());		
-		var authorClass = teapot.calcAuthorClass(tweet);
+		var authorClass = teapot.calcAuthorClass(tweet);		
 		result = "<div class=\"tweetcontents " + authorClass +"\" id=\"_tweetcontents_" + tweet.getId() + "\">";
 		result += "<a href=\"javascript:teapot.showUserProfile('" + tweet.getUserId() + "', '" + tweet.getUserScreenName() + "')\">"	
 		result += "<img class=\"avatar\" src=\"" + tweet.getUserProfileImageUrl() + 
@@ -235,6 +241,7 @@ var teapot = {
 		}
 		result += "</span><span class='tweetactions'>";		
 		result += " | <a href='javascript:teapot.replyToTweet(\"" + tweet.getId() + "\", \"" + tweet.getUserScreenName() + "\")'>REPLY</a>"
+		result += " | <a href='javascript:teapot.retweet(\"" + tweet.getId() + "\")'>RT</a>";
 		result += "</span></div>";
 		return result;
 	},
