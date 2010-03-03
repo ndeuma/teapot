@@ -1,15 +1,17 @@
 body {
 	font-family: sans-serif;		
-	background-color:#FFFFFF;
+	background-color:#ffffef;
 }
 
 .pagecontents {
-	width:70%;
+	width:60%;
+	min-width:620px;
 	margin: 30px auto;
 	border:10px solid #e5e5e5;
 	-moz-border-radius:10px;
 	-webkit-border-radius:10px;
-	-border-radius:10px;		
+	-border-radius:10px;	
+	background-color:#FFFFFF;	
 }
 
 .pagehead {
@@ -59,8 +61,9 @@ body {
 }
 
 .menubar {
+	text-align:center;	
 	background-color:#e5e5e5;
-	padding:5px;
+	padding:5px;		
 }
 
 .menuitem {
@@ -68,8 +71,12 @@ body {
 	text-decoration:none;
 }
 
-a:hover {
-	text-decoration:underline;
+a {
+	color:#4D4D4D;
+}
+
+a:hover {	
+	color:#0000FF;
 }
 
 .tweetcontents {
@@ -93,10 +100,6 @@ a:hover {
 }
 
 .tweettext {	
-}
-
-.hashtag, .username, .extlink {
-	color:#0000FF;
 }
 
 .tweetmeta, .tweetactions {	
