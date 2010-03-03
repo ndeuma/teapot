@@ -172,13 +172,17 @@ var teapot = {
 	},
 	
 	retweet : function(tweetId) {
-		if (window.confirm("Retweet to your followers?")) {
-			teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/statuses/retweet/" + tweetId + ".xml", { }, teapot.handleTweetPosted);
-		}		
+		if (window.confirm("Retweet to your followers?")) 
+			teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/statuses/retweet/" + tweetId + ".xml", { }, teapot.handleTweetPosted);		
 	},
 	
 	fav : function(tweetId) {		
 		teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/favorites/create/" + tweetId + ".xml", { }, teapot.handleFav);				
+	},
+	
+	deleteTweet : function(tweetId) {
+		if (window.confirm("Delete this tweet?"))
+			teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/statuses/destroy/" + tweetId + ".xml", { }, teapot.handleTweetPosted);
 	},
 	
 	doSearch : function() {		
@@ -246,10 +250,12 @@ var teapot = {
 		}
 		result += "</span><span class='tweetactions'>";
 		if (!isMyTweet) {
-			result += " | <a href='javascript:teapot.replyToTweet(\"" + tweet.getId() + "\", \"" + tweet.getUserScreenName() + "\")'>REPLY</a>"
-			result += " | <a href='javascript:teapot.retweet(\"" + tweet.getId() + "\")'>RT</a>";	
+			result += " | <a href='javascript:teapot.replyToTweet(\"" + tweet.getId() + "\", \"" + tweet.getUserScreenName() + "\")'>reply</a>"
+			result += " | <a href='javascript:teapot.retweet(\"" + tweet.getId() + "\")'>retweet</a>";	
 		}				
-		result += " | <a href='javascript:teapot.fav(\"" + tweet.getId() + "\")'>FAV</a>";
+		result += " | <a href='javascript:teapot.fav(\"" + tweet.getId() + "\")'>fav</a>";
+		if (isMyTweet) 
+			result += " | <a href='javascript:teapot.deleteTweet(\"" + tweet.getId() + "\")'>delete</a>";		
 		result += "</span></div>";
 		return result;
 	},
