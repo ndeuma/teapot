@@ -177,6 +177,10 @@ var teapot = {
 		}		
 	},
 	
+	fav : function(tweetId) {		
+		teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/favorites/create/" + tweetId + ".xml", { }, teapot.handleFav);				
+	},
+	
 	doSearch : function() {		
 		var searchTerm = window.prompt("Enter a search query:", "");
 		if (searchTerm != null) {
@@ -245,6 +249,7 @@ var teapot = {
 			result += " | <a href='javascript:teapot.replyToTweet(\"" + tweet.getId() + "\", \"" + tweet.getUserScreenName() + "\")'>REPLY</a>"
 			result += " | <a href='javascript:teapot.retweet(\"" + tweet.getId() + "\")'>RT</a>";	
 		}				
+		result += " | <a href='javascript:teapot.fav(\"" + tweet.getId() + "\")'>FAV</a>";
 		result += "</span></div>";
 		return result;
 	},
@@ -332,6 +337,11 @@ var teapot = {
 		$("#tweettextbox").attr(teapot.INPUT_BOX_STYLES["normal"]);
 		$("#tweetlengthbox").html(teapot.DEFAULT_LENGTH_MESSAGE);
 		teapot.showHomeTimeline();
+	},
+	
+	handleFav : function(event) {
+		$(event.target).remove();
+		teapot.showFavorites();
 	},
 	
 	showAbout : function() {
