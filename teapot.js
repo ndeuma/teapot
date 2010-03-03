@@ -1,3 +1,7 @@
+function outerHtml(stuff) {
+	return $("<div>").append(stuff).html();
+}
+
 function TweetWrapper(tweet, isSearchResult) {
 	this.tweet = tweet;
 	this.isSearchResult = isSearchResult;
@@ -87,7 +91,7 @@ var teapot = {
 
 	init : function() {
 		$("#tweetlengthbox").html(teapot.DEFAULT_LENGTH_MESSAGE);	
-		$("#tweettextbox").bind("keyup click", teapot.handleTweetTextBoxChanged)	
+		$("#tweettextbox").bind("keyup click", teapot.handleTweetTextBoxChanged)		
 		$.getJSON(teapot.PROTOCOL + "api.twitter.com/1/account/verify_credentials.json?callback=?", function(user){			
 			teapot.currentUser = user;
 			$("#waitmessage").ajaxStart(function(){ $("#waitmessage").show(); });
@@ -206,46 +210,54 @@ var teapot = {
 			}).join(""));					
 		else  											
 			$("#tweetlist").html(teapot.formatTweet(new TweetWrapper(statuses, isSearchResult)));
+		$(".tweetcontents").mouseenter(function (event) {
+			$(event.target).children(".tweetactions").fadeIn("fast");
+		});
+		$(".tweetcontents").mouseleave(function (event) {
+			$(event.target).children(".tweetactions").fadeOut("fast");
+		});			
 	},
 	
 	renderUserProfile : function(user) {
 		var result;
 		
-		var mainDiv = $("<div>").attr("class", "userprofile");
-		
-		mainDiv.append($("<img>")
-			.attr("src", user.profile_image_url)
-			.attr("alt", "Profile image of " + user.screen_name)
-		);
-		mainDiv.append($("<h2>")
-			.html(user.name + " (" + user.screen_name + ")")			
-		);
+		var mainDiv = $("<div>")
+			.addClass("userprofile")
+			.append($("<img>")
+				.attr("src", user.profile_image_url)
+				.attr("alt", "Profile image of " + user.screen_name))
+			.append($("<h2>")	
+				.append(user.name + " (" + user.screen_name + ")"));		
 		if (user.location)
-			mainDiv.append($("<span>")
-				.attr("class", "userlocation")
-				.html(user.location + "<br />")
-			);
+			mainDiv
+				.append(user.location)				
+				.append($("<br>"));
 		if (user.url)
-			mainDiv.append($("<a>")
-				.attr("href", user.url)
-				.attr("target", "_blank")
-				.html(user.url)
-			);
+			mainDiv
+				.append($("<a>")
+					.attr("href", user.url)
+					.attr("target", "_blank")
+					.html(user.url))
+				.append($("<br>"));
 		if (user["protected"])
-			mainDiv.append($("<span>")				
-				.html("This is a protected user.<br />")
-			);
-		mainDiv.append($("<p>")				
-				.html(user.statuses_count + " tweets, " + 
-					user.friends_count + " friends, " + 
-					user.followers_count + " followers<br />"));
+			mainDiv
+				.append("This is a protected user.<br />")				
+				.append($("<br>"));				
+		mainDiv
+			.append($("<p>")
+				.append($("<a>")
+					.attr("href", "javascript:teapot.showUserTimeline('" + user.id + "')")
+					.append(user.statuses_count + " tweets"))
+				.append(", ")					
+				.append(user.friends_count + " friends, ")
+				.append(user.followers_count + " followers"));
 		if (user.description)
-			mainDiv.append($("<p>")
-				.attr("class", "description")
-				.html(user.description)
-			);			
-				
-		$("#tweetlist").html(($("<div>").append(mainDiv)).html());
+			mainDiv
+				.append($("<p>")
+					.addClass("description")
+					.append(user.description));			
+						
+		$("#tweetlist").html(outerHtml(mainDiv));
 	},
 	
 	renderRateLimitStatus : function(status) {
@@ -256,31 +268,61 @@ var teapot = {
 		var result;		
 		var dateTime = new Date(tweet.getCreatedAt());
 		var isMyTweet = tweet.getUserScreenName() === teapot.currentUser.screen_name;		
-		var authorClass = isMyTweet ? "mytweet" : "othertweet"; 		
-		result = "<div class=\"tweetcontents " + authorClass +"\" id=\"_tweetcontents_" + tweet.getId() + "\">";
-		result += "<a href=\"javascript:teapot.showUserProfile('" + tweet.getUserId() + "', '" + tweet.getUserScreenName() + "')\">"	
-		result += "<img class=\"avatar\" src=\"" + tweet.getUserProfileImageUrl() + 
-			"\" width=\"40\" height=\"40\" alt=\" Profile image of " + tweet.getUserScreenName() + "\"/>";
-		result += "</a>"	 
-		result += "<span class=\"tweetusername\">"
-		result += "<a href='javascript:teapot.showUserTimeline(\"" + tweet.getUserId() + "\")'>"  + tweet.getUserScreenName() + "</a>"	
-		result += "</span> ";
-		result += "<span class='tweettext'>" + teapot.replaceRegexps(tweet.getText()) + "</span><br />";
-		result += "<span class='tweetmeta'>" + teapot.formatDateTime(dateTime)  + " from " + tweet.getSource();
-		if (tweet.getInReplyToStatusId() != null) {
-			result += " in reply to <a href='javascript:teapot.showSingleTweet(\"" + tweet.getInReplyToStatusId() + "\")'>"  
-				+ tweet.getInReplyToScreenName() + "</a>";
-		}
-		result += "</span><span class='tweetactions'>";
+		var authorClass = isMyTweet ? "mytweet" : "othertweet";
+		
+		var mainDiv = $("<div>")
+			.addClass("tweetcontents").addClass(authorClass)
+			.attr("id", "_tweetcontents_" + tweet.getId())
+			.append($("<a>")
+				.attr("href", "javascript:teapot.showUserProfile('" + tweet.getUserId() + "', '" + tweet.getUserScreenName() + "')")
+				.append($("<img>")
+					.addClass("avatar")
+					.attr("src", tweet.getUserProfileImageUrl())
+					.attr("width", "40").attr("height", "40")
+					.attr("alt", "Profile image of " + tweet.getUserScreenName())))
+			.append($("<span>")
+				.addClass("tweetusername")
+				.append($("<a>")
+					.attr("href", "javascript:teapot.showUserTimeline('" + tweet.getUserId() + "')")
+					.append(tweet.getUserScreenName()))
+				.append(" "))
+			.append($("<span>")
+				.addClass("tweettext")
+				.append(teapot.replaceRegexps(tweet.getText()))
+				.append($("<br>")));
+		
+		var tweetMeta = $("<span>").addClass("tweetmeta").append(teapot.formatDateTime(dateTime))
+			.append(" from ").append(tweet.getSource());		
+		if (tweet.getInReplyToStatusId() != null) 
+			tweetMeta
+				.append(" in reply to ")
+				.append($("<a>")
+					.attr("href", "javascript:teapot.showSingleTweet('" + 
+						tweet.getInReplyToStatusId() + "')")
+					.append(tweet.getInReplyToScreenName()));
+		tweetMeta.appendTo(mainDiv);					
+
+		var tweetActions = $("<span>").addClass("tweetactions");
 		if (!isMyTweet) {
-			result += " | <a href='javascript:teapot.replyToTweet(\"" + tweet.getId() + "\", \"" + tweet.getUserScreenName() + "\")'>reply</a>"
-			result += " | <a href='javascript:teapot.retweet(\"" + tweet.getId() + "\")'>retweet</a>";	
-		}				
-		result += " | <a href='javascript:teapot.fav(\"" + tweet.getId() + "\")'>fav</a>";
-		if (isMyTweet) 
-			result += " | <a href='javascript:teapot.deleteTweet(\"" + tweet.getId() + "\")'>delete</a>";		
-		result += "</span></div>";
-		return result;
+			tweetActions.append(" | ").append($("<a>")
+				.attr("href", "javascript:teapot.replyToTweet('" + tweet.getId() + "', '" + 
+					tweet.getUserScreenName() + "')")
+				.append("reply"));
+			tweetActions.append(" | ").append($("<a>")
+				.attr("href", "javascript:teapot.retweet('" + tweet.getId() + "')")
+				.append("retweet"));					
+		}
+		tweetActions.append(" | ").append($("<a>")
+			.attr("href", "javascript:teapot.fav('" + tweet.getId() + "')")
+			.append("fav"));
+		if (isMyTweet) {
+			tweetActions.append(" | ").append($("<a>")
+				.attr("href", "javascript:teapot.deleteTweet('" + tweet.getId() + "')")
+				.append("delete"));
+		}
+		tweetActions.appendTo(mainDiv);					
+														
+		return outerHtml(mainDiv);
 	},
 	
 	formatDateTime : function(date) {
@@ -329,7 +371,9 @@ var teapot = {
 	sendPostRequest : function(url, fields, postHandler) {
 		// Set up the target frame that is receiving the response to the POST request
 		var targetFrameId = teapot.guid();
-		$("<iframe>").attr("id", targetFrameId).attr("name", targetFrameId).attr("style", "display:none").appendTo($("#tweetboxcontainer"));
+		$("<iframe>").attr("id", targetFrameId).attr("name", targetFrameId)
+			.attr("style", "display:none")
+			.appendTo($("#tweetboxcontainer"));
 		$("#" + targetFrameId).bind("load", postHandler);
 												
 		// Set up the form inside the post frame												

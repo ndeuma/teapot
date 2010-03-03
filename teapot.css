@@ -71,7 +71,6 @@ a:hover {
 	border-left:4px solid #00ff00; 	
 } 
 
-
 .avatar {
 	border:0px;
 	float:left;
@@ -93,6 +92,14 @@ a:hover {
 .tweetmeta, .tweetactions {	
 	color:#4d4d4d;;
 	font-size:x-small;
+}
+
+.tweetactions {
+	display:none;
+}
+
+.tweetactions.visible {
+	display:inline;
 }
 
 #tweetlist a {
