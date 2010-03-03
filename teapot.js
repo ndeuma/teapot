@@ -210,19 +210,42 @@ var teapot = {
 	
 	renderUserProfile : function(user) {
 		var result;
-		result = "<div class=\"userprofile\">"
-		result += "<img src=\"" + user.profile_image_url + "\" alt=\" Profile image of " +user.screen_name + "\"/>";
-		result += "<h2>" + user.name + " (" + user.screen_name + ")</h2><p>"	
+		
+		var mainDiv = $("<div>").attr("class", "userprofile");
+		
+		mainDiv.append($("<img>")
+			.attr("src", user.profile_image_url)
+			.attr("alt", "Profile image of " + user.screen_name)
+		);
+		mainDiv.append($("<h2>")
+			.html(user.name + " (" + user.screen_name + ")")			
+		);
 		if (user.location)
-			result += user.location + "<br />"
+			mainDiv.append($("<span>")
+				.attr("class", "userlocation")
+				.html(user.location + "<br />")
+			);
 		if (user.url)
-			result += "<a href=\"" + user.url + "\" target=\"_blank\">" + user.url + "</a><br />"
+			mainDiv.append($("<a>")
+				.attr("href", user.url)
+				.attr("target", "_blank")
+				.html(user.url)
+			);
 		if (user["protected"])
-			result += "This is a protected user.<br />";
-		result += user.statuses_count + " tweets, " + user.friends_count + " friends, " + user.followers_count + " followers<br /></p>";	
+			mainDiv.append($("<span>")				
+				.html("This is a protected user.<br />")
+			);
+		mainDiv.append($("<p>")				
+				.html(user.statuses_count + " tweets, " + 
+					user.friends_count + " friends, " + 
+					user.followers_count + " followers<br />"));
 		if (user.description)
-			result += "<p class=\"description\">" + user.description + "</p></div>";		
-		$("#tweetlist").html(result);
+			mainDiv.append($("<p>")
+				.attr("class", "description")
+				.html(user.description)
+			);			
+				
+		$("#tweetlist").html(($("<div>").append(mainDiv)).html());
 	},
 	
 	renderRateLimitStatus : function(status) {
