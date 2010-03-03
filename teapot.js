@@ -223,8 +223,9 @@ var teapot = {
 	
 	formatTweet : function(tweet) {		
 		var result;		
-		var dateTime = new Date(tweet.getCreatedAt());		
-		var authorClass = teapot.calcAuthorClass(tweet);		
+		var dateTime = new Date(tweet.getCreatedAt());
+		var isMyTweet = tweet.getUserScreenName() === teapot.currentUser.screen_name;		
+		var authorClass = isMyTweet ? "mytweet" : "othertweet"; 		
 		result = "<div class=\"tweetcontents " + authorClass +"\" id=\"_tweetcontents_" + tweet.getId() + "\">";
 		result += "<a href=\"javascript:teapot.showUserProfile('" + tweet.getUserId() + "', '" + tweet.getUserScreenName() + "')\">"	
 		result += "<img class=\"avatar\" src=\"" + tweet.getUserProfileImageUrl() + 
@@ -239,16 +240,13 @@ var teapot = {
 			result += " in reply to <a href='javascript:teapot.showSingleTweet(\"" + tweet.getInReplyToStatusId() + "\")'>"  
 				+ tweet.getInReplyToScreenName() + "</a>";
 		}
-		result += "</span><span class='tweetactions'>";		
-		result += " | <a href='javascript:teapot.replyToTweet(\"" + tweet.getId() + "\", \"" + tweet.getUserScreenName() + "\")'>REPLY</a>"
-		result += " | <a href='javascript:teapot.retweet(\"" + tweet.getId() + "\")'>RT</a>";
+		result += "</span><span class='tweetactions'>";
+		if (!isMyTweet) {
+			result += " | <a href='javascript:teapot.replyToTweet(\"" + tweet.getId() + "\", \"" + tweet.getUserScreenName() + "\")'>REPLY</a>"
+			result += " | <a href='javascript:teapot.retweet(\"" + tweet.getId() + "\")'>RT</a>";	
+		}				
 		result += "</span></div>";
 		return result;
-	},
-	
-	calcAuthorClass : function(tweet) {
-		return (tweet.getUserScreenName() == teapot.currentUser.screen_name) ?
-			"mytweet" : "othertweet"; 
 	},
 	
 	formatDateTime : function(date) {
