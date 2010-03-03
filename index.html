@@ -14,30 +14,35 @@
 		</script>
 	</head>
 	<body>
-		<div class="menubar">
-			<a class="menuitem" href="javascript:teapot.showAbout();">ABOUT</a>
-		</div>
-		<div id="username"></div>				
-		<div id="tweetlengthbox"></div>				
-		<div id="tweetboxcontainer">	
-			<form action="" onsubmit="return teapot.sendTweet();">
-				<textarea cols="70" rows="2" id="tweettextbox"></textarea>
-				<input type="submit" id="tweetbutton" value="Tweet" />
-			</form>				
-		</div>	
-		<div class="menubar">
-			<a class="menuitem" href="javascript:teapot.showPublicTimeline()">PUBLIC</a> -
-			<a class="menuitem" href="javascript:teapot.showHomeTimeline()">HOME</a> - 
-			<a class="menuitem" href="javascript:teapot.showMyTimeline()">ME</a> -	
-			<a class="menuitem" href="javascript:teapot.showAnyUserTimeline()">USER</a> -			
-			<a class="menuitem" href="javascript:teapot.showMentions()">REPLIES</a> -
-			<a class="menuitem" href="javascript:teapot.showFavorites()">FAVS</a> -					
-			<a class="menuitem" href="javascript:teapot.doSearch()">SEARCH</a>
-		</div>		
-		<div id="waitmessage">Please wait...</div>	
-		<div id="tweetlist" />
-		<div id="footer">
-			<span id="requestsremaining"></span>
+		<div class="pagecontents">
+			<div class="menubar">
+				User: <span id="username"></span> - 
+				<a class="menuitem" href="javascript:teapot.showAbout();">ABOUT</a>				
+			</div>
+			<div class="pagehead">															
+				<div id="tweetboxcontainer">	
+					<form action="" onsubmit="return teapot.sendTweet();">
+						<textarea cols="70" rows="2" id="tweettextbox"></textarea>
+						<br />
+						<input type="submit" id="tweetbutton" value="Tweet" />
+						<span id="tweetlengthbox" />
+					</form>				
+				</div>	
+			</div>
+			<div class="menubar">
+				<a class="menuitem" href="javascript:teapot.showPublicTimeline()">PUBLIC</a> -
+				<a class="menuitem" href="javascript:teapot.showHomeTimeline()">HOME</a> - 
+				<a class="menuitem" href="javascript:teapot.showMyTimeline()">ME</a> -	
+				<a class="menuitem" href="javascript:teapot.showAnyUserTimeline()">USER</a> -			
+				<a class="menuitem" href="javascript:teapot.showMentions()">REPLIES</a> -
+				<a class="menuitem" href="javascript:teapot.showFavorites()">FAVS</a> -					
+				<a class="menuitem" href="javascript:teapot.doSearch()">SEARCH</a>
+			</div>		
+			<div id="waitmessage">Please wait...</div>	
+			<div id="tweetlist" />
+			<div id="footer">
+				<span id="requestsremaining"></span>
+			</div>
 		</div>
 	</body>
 </html>

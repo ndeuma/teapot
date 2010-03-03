@@ -3,6 +3,19 @@ body {
 	background-color:#FFFFFF;
 }
 
+.pagecontents {
+	width:70%;
+	margin: 30px auto;
+	border:10px solid #e5e5e5;
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+	-border-radius:10px;		
+}
+
+.pagehead {
+	padding:15px;	
+}
+
 #waitmessage {
 	display:none;
 	padding:50px;	
@@ -22,27 +35,27 @@ body {
 	-moz-opacity:0.7;
 }
 
-#searchinput {
-	display:inline;
-}
-
-#searchtextbox[class=unfocused] {	
-	color:#e5e5e5;
-	font-weight:bold;
-}
-
-#searchtextbox[class=focused] {	
-	color:#000000;
-	font-weight:bold;
-}
-
 #tweetboxcontainer {
 	margin-top:10px;
 }
 
-#tweettextbox {
-	border:1px solid black;
+#tweettextbox {		
 	font-family:sans-serif;
+	width:70%;
+}
+
+#tweetbutton {
+	height:2em;
+}
+
+#tweetlengthbox {		
+	margin-left:20px;
+	height:2em;
+}
+
+.longtext {
+	background-color:#FF0000;
+	color:#FFFFFF;
 }
 
 .menubar {
@@ -59,12 +72,9 @@ a:hover {
 	text-decoration:underline;
 }
 
-#tweetlist {		
-}
-
 .tweetcontents {
 	padding:15px;
-	border-bottom:2px solid #e5e5e5;
+	border-bottom:1px dotted #e5e5e5;
 }
 
 .tweetcontents.mytweet {

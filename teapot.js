@@ -90,16 +90,16 @@ var teapot = {
 	},
 
 	init : function() {
-		$("#tweetlengthbox").html(teapot.DEFAULT_LENGTH_MESSAGE);	
+		$("#tweetlengthbox").html("140");	
 		$("#tweettextbox").bind("keyup click", teapot.handleTweetTextBoxChanged)		
 		$.getJSON(teapot.PROTOCOL + "api.twitter.com/1/account/verify_credentials.json?callback=?", function(user){			
 			teapot.currentUser = user;
-			$("#waitmessage").ajaxStart(function(){ $("#waitmessage").show(); });
-			$("#waitmessage").ajaxStop(function(){ $("#waitmessage").hide(); });						
+			$("#waitmessage").ajaxStart(function(){ $("#waitmessage").fadeIn("slow"); });
+			$("#waitmessage").ajaxStop(function(){ $("#waitmessage").fadeOut("slow"); });						
 			$("#waitmessage").ajaxError(function(event, request, options, thrownError){ 
 				console.log(event, request, options, thrownError); 
 			});			
-			$("#username").html("You are " + user.screen_name + ".");					
+			$("#username").html(user.screen_name);					
 			teapot.showHomeTimeline();			
 		});
 	},
@@ -347,14 +347,14 @@ var teapot = {
 	handleTweetTextBoxChanged : function(event) {
 		var length = $("#tweettextbox").val().length;
 		if (length > 140) {
-			$("#tweettextbox").attr(teapot.INPUT_BOX_STYLES["too_long"]);
+			$("#tweettextbox").addClass("longtext");
 			$("#tweetbutton").attr({ disabled: true });
-			$("#tweetlengthbox").html("You have too many characters in your tweet.")
+			$("#tweetlengthbox").html("Too long!")
 		}
 		else {
-			$("#tweettextbox").attr(teapot.INPUT_BOX_STYLES[(length > 120) ? "long" : "normal"]);						
+			$("#tweettextbox").removeClass("longtext")						
 			$("#tweetbutton").attr({ disabled: false });
-			$("#tweetlengthbox").html("You have " + (140 - length) + " characters remaining for your tweet.")
+			$("#tweetlengthbox").html(140 - length);
 		}					
 	},
 	
@@ -408,7 +408,7 @@ var teapot = {
 		teapot.currentTweetProperties.replyToId = null;				
 		$("#tweettextbox").val("");
 		$("#tweettextbox").attr(teapot.INPUT_BOX_STYLES["normal"]);
-		$("#tweetlengthbox").html(teapot.DEFAULT_LENGTH_MESSAGE);
+		$("#tweetlengthbox").html("140");
 		teapot.showHomeTimeline();
 	},
 	
