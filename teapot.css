@@ -123,6 +123,10 @@ a:hover {
 	padding:15px;
 }
 
+.userinfotable td {
+	padding:5px;
+}
+
 
 .description {
 	display:inline;

@@ -153,8 +153,11 @@ var teapot = {
 		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus)	
 	},
 	
-	showFavorites : function() {
-		$.getJSON(teapot.PROTOCOL + "api.twitter.com/1/favorites.json?count=200&callback=?", teapot.renderStatuses);
+	showFavorites : function(userId) {
+		var url = teapot.PROTOCOL + "api.twitter.com/1/favorites.json?count=200&callback=?";
+		if (userId)
+			url += "&id=" + userId
+		$.getJSON(url, teapot.renderStatuses);
 		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus)	
 	},
 	
@@ -204,11 +207,11 @@ var teapot = {
 	
 	renderStatuses : function(statuses, isSearchResult) {
 		// statuses is a list of tweets
-		if (statuses.length != undefined) 
-			$("#tweetlist").html($.map(statuses, function(status) {
+		if (statuses.length != undefined) 			
+			$("#tweetlist").html($.map(statuses, function(status){
 				return teapot.formatTweet(new TweetWrapper(status, isSearchResult));
 			}).join(""));					
-		else  											
+		else 
 			$("#tweetlist").html(teapot.formatTweet(new TweetWrapper(statuses, isSearchResult)));
 		$(".tweetcontents").mouseenter(function (event) {
 			$(event.target).children(".tweetactions").fadeIn("fast");
@@ -244,13 +247,33 @@ var teapot = {
 				.append("This is a protected user.<br />")				
 				.append($("<br>"));				
 		mainDiv
-			.append($("<p>")
-				.append($("<a>")
-					.attr("href", "javascript:teapot.showUserTimeline('" + user.id + "')")
-					.append(user.statuses_count + " tweets"))
-				.append(", ")					
-				.append(user.friends_count + " friends, ")
-				.append(user.followers_count + " followers"));
+			.append($("<table>")
+				.addClass("userinfotable")
+				.append($("<tr>")
+					.append($("<td>")
+						.append("Tweets"))
+					.append($("<td>")
+						.append($("<a>")
+							.attr("href", "javascript:teapot.showUserTimeline('" + user.id + "')")						
+							.append(user.statuses_count)))
+				.append($("<tr>")
+					.append($("<td>")
+						.append("Friends"))
+					.append($("<td>")	
+						.append(user.friends_count)))								
+				.append($("<tr>")
+					.append($("<td>")
+						.append("Followers"))
+					.append($("<td>")	
+						.append(user.followers_count)))
+				.append($("<tr>")
+					.append($("<td>")
+						.append("Favorites"))
+					.append($("<td>")
+						.append($("<a>")
+							.attr("href", "javascript:teapot.showFavorites('" + user.id + "')")						
+							.append(user.favourites_count))))));										
+			
 		if (user.description)
 			mainDiv
 				.append($("<p>")
