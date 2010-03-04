@@ -90,9 +90,6 @@ var teapot = {
 	},
 
 	init : function() {
-		logger.init(logger.LEVELS.DEBUG);
-		logger.debug("testdebug");
-		logger.error("testerror");
 		$("#tweetlengthbox").html("140");	
 		$("#tweettextbox").bind("keyup click", teapot.handleTweetTextBoxChanged)		
 		$.getJSON(teapot.PROTOCOL + "api.twitter.com/1/account/verify_credentials.json?callback=?", function(user){			
