@@ -455,13 +455,13 @@ var logger = {
 		initialized : false,
 
 		init : function(lvl){
-			if(!console) return;
 			logger.level = lvl;
 			logger.DESCRIPTIVE_LEVELS = {};
 			for (var level in logger.LEVELS){
 				var lvl = logger.LEVELS[level];
 				logger.add(lvl, level);
 			}
+			if(!console) return;
 			logger.initialized = true;
 		},
 		
