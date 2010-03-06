@@ -51,7 +51,6 @@ function TweetWrapper(tweet, isSearchResult) {
 	};
 }
 
-
 var teapot = {
 
 	PROTOCOL : "https://",
@@ -168,9 +167,22 @@ var teapot = {
 		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus)
 	},
 	
-	showUserProfile : function(userId, userName) {
-		$.getJSON(teapot.PROTOCOL + "api.twitter.com/1/users/show.json?user_id=" + userId + "&callback=?", teapot.renderUserProfile);
-		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus)	
+	showUserProfile : function(userId, userName) {		
+		$.getJSON(teapot.PROTOCOL + "api.twitter.com/1/users/show.json?user_id=" 
+			+ userId + "&callback=?", function(user) {
+				
+			$.getJSON(teapot.PROTOCOL + "api.twitter.com/1/friendships/show.json?target_id=" 
+				+ userId + "&source_id=" + teapot.currentUser.id + "&callback=?", function(relation) {
+				
+				var template = TrimPath.parseDOMTemplate("template_user_profile");
+				var output = template.process({
+					user : user,
+					relation : relation.relationship
+				});
+				$("#contentarea").html(output);
+			});		
+		});
+		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus);	
 	},
 	
 	replyToTweet : function(tweetId, userName) {
@@ -208,79 +220,17 @@ var teapot = {
 	renderStatuses : function(statuses, isSearchResult) {
 		// statuses is a list of tweets
 		if (statuses.length != undefined) 			
-			$("#tweetlist").html($.map(statuses, function(status){
+			$("#contentarea").html($.map(statuses, function(status){
 				return teapot.formatTweet(new TweetWrapper(status, isSearchResult));
 			}).join(""));					
 		else 
-			$("#tweetlist").html(teapot.formatTweet(new TweetWrapper(statuses, isSearchResult)));
+			$("#contentarea").html(teapot.formatTweet(new TweetWrapper(statuses, isSearchResult)));
 		$(".tweetcontents").mouseenter(function (event) {
 			$(event.target).children(".tweetactions").fadeIn("fast");
 		});
 		$(".tweetcontents").mouseleave(function (event) {
 			$(event.target).children(".tweetactions").fadeOut("fast");
 		});			
-	},
-	
-	renderUserProfile : function(user) {
-		var result;
-		
-		var mainDiv = $("<div>")
-			.addClass("userprofile")
-			.append($("<img>")
-				.attr("src", user.profile_image_url)
-				.attr("alt", "Profile image of " + user.screen_name))
-			.append($("<h2>")	
-				.append(user.name + " (" + user.screen_name + ")"));		
-		if (user.location)
-			mainDiv
-				.append(user.location)				
-				.append($("<br>"));
-		if (user.url)
-			mainDiv
-				.append($("<a>")
-					.attr("href", user.url)
-					.attr("target", "_blank")
-					.html(user.url))
-				.append($("<br>"));
-		if (user["protected"])
-			mainDiv
-				.append("This is a protected user.<br />")				
-				.append($("<br>"));				
-		mainDiv
-			.append($("<table>")
-				.addClass("userinfotable")
-				.append($("<tr>")
-					.append($("<td>")
-						.append("Tweets"))
-					.append($("<td>")
-						.append($("<a>")
-							.attr("href", "javascript:teapot.showUserTimeline('" + user.id + "')")						
-							.append(user.statuses_count)))
-				.append($("<tr>")
-					.append($("<td>")
-						.append("Friends"))
-					.append($("<td>")	
-						.append(user.friends_count)))								
-				.append($("<tr>")
-					.append($("<td>")
-						.append("Followers"))
-					.append($("<td>")	
-						.append(user.followers_count)))
-				.append($("<tr>")
-					.append($("<td>")
-						.append("Favorites"))
-					.append($("<td>")
-						.append($("<a>")
-							.attr("href", "javascript:teapot.showFavorites('" + user.id + "')")						
-							.append(user.favourites_count))))));										
-			
-		if (user.description)
-			mainDiv
-				.append($("<p>")
-					.addClass("description")
-					.append(user.description));			
-						
-		$("#tweetlist").html(outerHtml(mainDiv));
 	},
 	
 	renderRateLimitStatus : function(status) {
@@ -329,7 +279,7 @@ var teapot = {
 		if (!isMyTweet) {
 			tweetActions.append($("<a>").append($("<img>")
 				.addClass("tweetactionicon")
-				.attr("src", "reply.gif")
+				.attr("src", "icons/reply.gif")
 				.attr("width", "12")
 				.attr("height", "12")
 				.attr("alt", "Reply")
@@ -339,7 +289,7 @@ var teapot = {
 			tweetActions.append($("<a>")
 				.append($("<img>")
 				.addClass("tweetactionicon")
-				.attr("src", "rt.gif")
+				.attr("src", "icons/rt.gif")
 				.attr("width", "12")
 				.attr("height", "12")
 				.attr("alt", "Retweet")
@@ -348,7 +298,7 @@ var teapot = {
 		}
 		tweetActions.append($("<a>").append($("<img>")
 				.addClass("tweetactionicon")
-				.attr("src", "fav.gif")
+				.attr("src", "icons/fav.gif")
 				.attr("width", "12")
 				.attr("height", "12")
 				.attr("alt", "Favorite")
@@ -357,7 +307,7 @@ var teapot = {
 		if (isMyTweet) {
 			tweetActions.append($("<a>").append($("<img>")
 				.addClass("tweetactionicon")
-				.attr("src", "delete.gif")
+				.attr("src", "icons/delete.gif")
 				.attr("width", "12")
 				.attr("height", "12")
 				.attr("alt", "Delete")
@@ -383,9 +333,9 @@ var teapot = {
 	
 	replaceRegexps : function(tweetText) {
 		// Hashtag at start of tweet
-		tweetText = tweetText.replace(/^(#[\w\d]+)/g, teapot.hashtagLink("$1"));
+		tweetText = tweetText.replace(/^(#[\w\d]+([\+\-]?))/g, teapot.hashtagLink("$1"));
 		// Hashtag at end of tweet
-		tweetText = tweetText.replace(/ (#[\w\d]+)/g, " " + teapot.hashtagLink("$1"));		
+		tweetText = tweetText.replace(/ (#[\w\d]+([\+\-]?))/g, " " + teapot.hashtagLink("$1"));		
 		tweetText = tweetText.replace(/^(@([\w\d]+))/g, teapot.userNameLink("$2")); 			
 		tweetText = tweetText.replace(/([^\w])@([\w\d]+)/g, "$1" + teapot.userNameLink("$2"));
 		tweetText = tweetText.replace(/((https?|ftp):\/\/[\w\d.\/\-\?\[\]\*_&~#%\+=:{},]+)/g, teapot.urlLink("$1"));

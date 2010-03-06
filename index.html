@@ -3,10 +3,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title>teapot - A 100% HTML5 Twitter client</title>
-		<link rel="stylesheet" type="text/css" href="teapot.css" />
-		<script type="text/javascript" src="jquery/jquery-1.4.2.js"></script>		
-		<script type="text/javascript" src="jquery/jquery-ui-1.8rc2.js"></script>
-		<script type="text/javascript" src="teapot.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/teapot.css" />
+		<script type="text/javascript" src="libs/jquery-1.4.2.js"></script>		
+		<script type="text/javascript" src="libs/jquery-ui-1.8rc2.js"></script>
+		<script type="text/javascript" src="libs/trimpath-template-1.0.38.js"></script>
+		<script type="text/javascript" src="libs/teapot.js"></script>		
 		<script type="text/javascript">
 		$(function() {			
 			teapot.init();			
@@ -40,10 +41,106 @@
 				<a class="menuitem" href="javascript:teapot.doSearch()">search</a>
 			</div>		
 			<div id="waitmessage">Please wait...</div>	
-			<div id="tweetlist" />
+			<div id="contentarea"></div>
 			<div id="footer">
 				<span id="requestsremaining"></span>
-			</div>
-		</div>
+			</div>							
+						
+<!-- Templates for usage with TrimPath JavaScript Templates -->
+<!-- User profile -->
+<textarea id="template_user_profile" cols="0" rows="0" style="display:none;">				
+	<table class="userinfotable">
+		<tr>
+			<td style="max-width:400px;padding:20px;vertical-align:top;">					
+				<img src="${user.profile_image_url}" alt="User profile of ${user.screen_name}" />
+				<h1>${user.screen_name}</h1>
+				<p>${user.name}</p>
+				<p>
+				{if user.location}
+					${user.location}<br />
+				{/if}					
+				{if user.url}
+					<a href="${user.url}">${user.url}</a>
+				{/if}	
+				</p>
+				<p>${user.description}</p>										
+			</td>
+			<td valign="top">		
+				<table>
+					<tr>
+						<td colspan="2" class="userprofilesection">
+							Content
+						</td>
+						<td colspan="2" class="userprofilesection">
+							Actions
+						</td>
+					</tr>														
+					<tr>
+						<td>Tweets</td>
+						<td>
+							<a href="javascript:teapot.showUserTimeline('${user.id}')">
+							${user.statuses_count}
+							</a>
+							&nbsp;
+							<a href="http://twitter.com/statuses/user_timeline/${user.id}.rss" 
+								target="_blank">							
+								<img src="icons/rss.png" width="16" height="16" alt="RSS feed" />
+							</a>
+						</td>
+						<td rowspan="8">
+							{if user.screen_name == teapot.currentUser.screen_name}
+								<p>
+								<b>This is you.</b> Obviously, you cannot follow, unfollow, or block 
+								yourself.
+								</p>
+							{/if}							
+							{if user.protected}
+								<p> 
+								This is a protected user.
+								</p>
+							{/if}
+							{if user.screen_name != teapot.currentUser.screen_name}
+								{if relation.target.followed_by}
+									You are following this user.
+								{else}
+									You are not following this user.
+								{/if}
+								<!--
+								<ul class="useractionslist">									
+								{if relation.target.followed_by}											
+									<li><a href="#">Unfollow</a></li>
+								{else}
+									<li><a href="#">Follow</a></li>
+								{/if}																					
+								</ul>
+								-->
+							{/if}														
+						</td>
+					</tr>
+					<tr>									
+						<td>Favorites</td>
+						<td>
+							<a href="javascript:teapot.showFavorites('${user.id}')">							
+							${user.favourites_count}
+							</a>
+						</td>					
+					</tr>
+					<tr>
+						<td colspan="2" class="userprofilesection">
+							Social Graph
+						</td>
+					</tr>
+					<tr>
+						<td>Friends</td><td>${user.friends_count}</td>
+					</tr>
+					<tr>									
+						<td>Followers</td><td>${user.followers_count}</td>
+					</tr>								
+				</table>						
+			</td>    		
+		</tr>
+	</table>											
+</textarea>
+		</div>		
 	</body>
 </html>

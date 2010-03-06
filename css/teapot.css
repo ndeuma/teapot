@@ -1,10 +1,11 @@
 body {
 	font-family: sans-serif;		
 	background-color:#ffffef;
+	font-size:0.9em;
 }
 
 .pagecontents {
-	width:60%;
+	max-width:1000px;
 	min-width:620px;
 	margin: 30px auto;
 	border:10px solid #e5e5e5;
@@ -124,16 +125,35 @@ a:hover {
 	vertical-align:middle;	
 }
 
-#tweetlist a {
+#contentarea a {
 	text-decoration:none;
 }
 
-.userprofile {	
+#footer {
+	border-top:10px solid #e5e5e5;
+}
+
+.userprofile {		
 	padding:15px;
 }
 
-.userinfotable td {
-	padding:5px;
+.userinfotable td {	
+	padding:2px 5px;
+}
+
+.useractionslist li {
+	list-style-type:square;
+	padding:10px;
+}
+
+.userlistslist li {
+	list-style-type:square;
+	margin-left:0px;
+	padding:0px;
+}
+
+.userprofilesection {	
+	background-color:#e5e5e5;
 }
 
 
