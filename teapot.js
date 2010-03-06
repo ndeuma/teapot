@@ -355,9 +355,14 @@ var teapot = {
 				.attr("title", "Add this tweet to your favorites"))
 			.attr("href", "javascript:teapot.fav('" + tweet.getId() + "')"));
 		if (isMyTweet) {
-			tweetActions.append(" | ").append($("<a>")
-				.attr("href", "javascript:teapot.deleteTweet('" + tweet.getId() + "')")
-				.append("delete"));
+			tweetActions.append($("<a>").append($("<img>")
+				.addClass("tweetactionicon")
+				.attr("src", "delete.gif")
+				.attr("width", "12")
+				.attr("height", "12")
+				.attr("alt", "Delete")
+				.attr("title", "Delete this tweet"))
+				.attr("href", "javascript:teapot.deleteTweet('" + tweet.getId() + "')"));
 		}
 		tweetActions.appendTo(mainDiv);					
 														
