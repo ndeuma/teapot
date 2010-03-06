@@ -327,17 +327,33 @@ var teapot = {
 
 		var tweetActions = $("<span>").addClass("tweetactions");
 		if (!isMyTweet) {
-			tweetActions.append(" | ").append($("<a>")
+			tweetActions.append($("<a>").append($("<img>")
+				.addClass("tweetactionicon")
+				.attr("src", "reply.gif")
+				.attr("width", "12")
+				.attr("height", "12")
+				.attr("alt", "Reply")
+				.attr("title", "Reply to this tweet"))
 				.attr("href", "javascript:teapot.replyToTweet('" + tweet.getId() + "', '" + 
-					tweet.getUserScreenName() + "')")
-				.append("reply"));
-			tweetActions.append(" | ").append($("<a>")
-				.attr("href", "javascript:teapot.retweet('" + tweet.getId() + "')")
-				.append("retweet"));					
+					tweet.getUserScreenName() + "')"));
+			tweetActions.append($("<a>")
+				.append($("<img>")
+				.addClass("tweetactionicon")
+				.attr("src", "rt.gif")
+				.attr("width", "12")
+				.attr("height", "12")
+				.attr("alt", "Retweet")
+				.attr("title", "Retweet this tweet"))
+				.attr("href", "javascript:teapot.retweet('" + tweet.getId() + "')"));					
 		}
-		tweetActions.append(" | ").append($("<a>")
-			.attr("href", "javascript:teapot.fav('" + tweet.getId() + "')")
-			.append("fav"));
+		tweetActions.append($("<a>").append($("<img>")
+				.addClass("tweetactionicon")
+				.attr("src", "fav.gif")
+				.attr("width", "12")
+				.attr("height", "12")
+				.attr("alt", "Favorite")
+				.attr("title", "Add this tweet to your favorites"))
+			.attr("href", "javascript:teapot.fav('" + tweet.getId() + "')"));
 		if (isMyTweet) {
 			tweetActions.append(" | ").append($("<a>")
 				.attr("href", "javascript:teapot.deleteTweet('" + tweet.getId() + "')")
@@ -363,7 +379,7 @@ var teapot = {
 	replaceRegexps : function(tweetText) {
 		// Hashtag at start of tweet
 		tweetText = tweetText.replace(/^(#[\w\d]+)/g, teapot.hashtagLink("$1"));
-		// All other hashtags
+		// Hashtag at end of tweet
 		tweetText = tweetText.replace(/ (#[\w\d]+)/g, " " + teapot.hashtagLink("$1"));		
 		tweetText = tweetText.replace(/(@([\w\d]+))/g, teapot.userNameLink("$2")); 			
 		tweetText = tweetText.replace(/((https?|ftp):\/\/[\w\d.\/-~\-&#]+)/g, teapot.urlLink("$1"));

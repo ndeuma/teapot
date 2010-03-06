@@ -71,6 +71,10 @@ body {
 	text-decoration:none;
 }
 
+a img {
+	border:0px;
+}
+
 a {
 	color:#4D4D4D;
 }
@@ -89,7 +93,6 @@ a:hover {
 } 
 
 .avatar {
-	border:0px;
 	float:left;
 	padding-right:1em;
 }
@@ -113,6 +116,12 @@ a:hover {
 
 .tweetactions.visible {
 	display:inline;
+}
+
+.tweetactionicon {
+	margin-left:6px;
+	margin-right:6px;
+	vertical-align:middle;	
 }
 
 #tweetlist a {
