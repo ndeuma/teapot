@@ -25,10 +25,13 @@
 					assertDisplay("An #. example", "An #. example");
 					assertDisplay("An#example", "An#example");
 					assertDisplay(userNameLink("user") + ": hello", "@user: hello");					
+					assertDisplay("mail@server.com", "mail@server.com");
+					assertDisplay("hey:" + userNameLink("user") + "!", "hey:@user!");
+					assertDisplay(userNameLink("u_1") + "," + userNameLink("u_2"), "@u_1,@u_2");
 					assertDisplay(urlLink("ftp://x_y-z?a&b#1~23.{4}"), "ftp://x_y-z?a&b#1~23.{4}");
 					assertDisplay(urlLink("https://xy.de:80/a?q=123"), "https://xy.de:80/a?q=123");
 					assertDisplay(urlLink("http://server?q=a%20b+4"), "http://server?q=a%20b+4");
-					assertDisplay(urlLink("http://server?q=[hello]"), "http://server?q=[hello]");
+					assertDisplay(urlLink("http://server?q=[hello,]"), "http://server?q=[hello,]");
 				}													
 			}
 			testReplaceRegexps();									
