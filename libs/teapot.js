@@ -192,16 +192,38 @@ var teapot = {
 	
 	retweet : function(tweetId) {
 		if (window.confirm("Retweet to your followers?")) 
-			teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/statuses/retweet/" + tweetId + ".xml", { }, teapot.handleTweetPosted);		
+			teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/statuses/retweet/" + 
+				tweetId + ".xml", { }, teapot.handleTweetPosted);		
 	},
 	
 	fav : function(tweetId) {		
-		teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/favorites/create/" + tweetId + ".xml", { }, teapot.handleFav);				
+		teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/favorites/create/" + 
+			tweetId + ".xml", { }, function(event) {
+				$(event.target).remove();
+				teapot.showFavorites();
+			});				
 	},
 	
 	deleteTweet : function(tweetId) {
 		if (window.confirm("Delete this tweet?"))
-			teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/statuses/destroy/" + tweetId + ".xml", { }, teapot.handleTweetPosted);
+			teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/statuses/destroy/" + 
+				tweetId + ".xml", { }, teapot.handleTweetPosted);
+	},
+	
+	follow : function(userId, userName) {
+		teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/friendships/create/" 
+			+ userId + ".xml", { screen_name : userName }, function(event) {
+				$(event.target).remove();
+				alert("You are now following " + userName);				
+			});
+	},
+	
+	unfollow : function(userId, userName) {
+		teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/friendships/destroy/" 
+			+ userId + ".xml", { screen_name : userName }, function(event) {
+				$(event.target).remove();				
+				alert("You are no longer following " + userName);
+			});
 	},
 	
 	doSearch : function() {		
@@ -422,11 +444,6 @@ var teapot = {
 		$("#tweettextbox").attr(teapot.INPUT_BOX_STYLES["normal"]);
 		$("#tweetlengthbox").html("140");
 		teapot.showHomeTimeline();
-	},
-	
-	handleFav : function(event) {
-		$(event.target).remove();
-		teapot.showFavorites();
 	},
 	
 	showAbout : function() {

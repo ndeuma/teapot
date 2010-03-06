@@ -100,20 +100,23 @@
 								</p>
 							{/if}
 							{if user.screen_name != teapot.currentUser.screen_name}
-								{if relation.target.followed_by}
-									You are following this user.
+								{if relation.target.following}
+									This user is following you.<br />
 								{else}
-									You are not following this user.
-								{/if}
-								<!--
+									This user is not following you.<br />
+								{/if}						
+								{if relation.target.followed_by}
+									You are following this user.<br />
+								{else}
+									You are not following this user.<br />
+								{/if}								
 								<ul class="useractionslist">									
 								{if relation.target.followed_by}											
-									<li><a href="#">Unfollow</a></li>
+									<li><a href="javascript:teapot.unfollow('${user.id}', '${user.screen_name}')">Unfollow</a></li>
 								{else}
-									<li><a href="#">Follow</a></li>
+									<li><a href="javascript:teapot.follow('${user.id}', '${user.screen_name}')">Follow</a></li>
 								{/if}																					
-								</ul>
-								-->
+								</ul>								
 							{/if}														
 						</td>
 					</tr>
