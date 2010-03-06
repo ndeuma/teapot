@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" href="qunit/qunit.css" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Unit Tests</title>
+		<script type="text/javascript" src="jquery/jquery-1.4.2.js"></script>
+		<script type="text/javascript" src="qunit/qunit.js" ></script>
+		<script type="text/javascript" src="teapot.js"></script>
+		<script type="text/javascript">
+		$(function() {
+			function assertRegexp(expected, input) {
+				test(input, function() {
+					equals(expected, teapot.replaceRegexps(input))
+				});
+			}
+			
+			function testReplaceRegexps() {
+				module("testReplaceRegexps");
+				with (teapot) {
+					assertRegexp(hashtagLink("#simple") + " example", "#simple example");		
+					assertRegexp("A " + hashtagLink("#simple") + " example", "A #simple example");
+					assertRegexp("A " + hashtagLink("#1337") + " example", "A #1337 example");		
+					assertRegexp("An # example", "An # example");
+					assertRegexp("An #. example", "An #. example");
+					assertRegexp("An#example", "An#example");
+					assertRegexp(userNameLink("user") + ": hello", "@user: hello");					
+					assertRegexp(urlLink("ftp://x_y-z?a&b#1~23.4"), "ftp://x_y-z?a&b#1~23.4");	
+				}													
+			}
+			testReplaceRegexps();									
+		});
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">Unit Tests</h1>
+		<h2 id="qunit-banner"></h2>
+ 		<h2 id="qunit-userAgent"></h2>
+ 		<ol id="qunit-tests"></ol>
+	</body>
+</html>

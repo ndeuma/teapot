@@ -360,11 +360,28 @@ var teapot = {
 		return $.datepicker.formatDate("yy-mm-dd, " + timeStr, date);
 	},
 	
-	replaceRegexps : function(tweetText) {	
-		tweetText = tweetText.replace(/(@(\w+))/g, '@<a class="username" href="javascript:teapot.showUserTimelineByName(\'$2\')">$2</a>'); 
-		tweetText = tweetText.replace(/(#\w+)/g, '<a class="hashtag" href="javascript:teapot.showHashTag(\'$1\')">$1</a>');	
-		tweetText = tweetText.replace(/(https?:\/\/[\w.\/-~\-&]+)/g, '<a class="extlink" target="_blank" href="$1">$1</a>');
+	replaceRegexps : function(tweetText) {
+		// Hashtag at start of tweet
+		tweetText = tweetText.replace(/^(#[\w\d]+)/g, teapot.hashtagLink("$1"));
+		// All other hashtags
+		tweetText = tweetText.replace(/ (#[\w\d]+)/g, " " + teapot.hashtagLink("$1"));		
+		tweetText = tweetText.replace(/(@([\w\d]+))/g, teapot.userNameLink("$2")); 			
+		tweetText = tweetText.replace(/((https?|ftp):\/\/[\w\d.\/-~\-&#]+)/g, teapot.urlLink("$1"));
 		return tweetText;
+	},
+	
+	hashtagLink : function (hashtag) {
+		return '<a class="hashtag" href="javascript:teapot.showHashTag(\'' + hashtag + '\')">' + 
+			hashtag + '</a>';	
+	},
+	
+	urlLink : function (url) {
+		return '<a class="extlink" target="_blank" href="' + url + '">' + url + '</a>';	
+	},
+	
+	userNameLink : function (userName) {
+		return '@<a class="username" href="javascript:teapot.showUserTimelineByName(\'' + 
+			userName + '\')">' + userName + '</a>';	
 	},
 	
 	handleTweetTextBoxChanged : function(event) {
