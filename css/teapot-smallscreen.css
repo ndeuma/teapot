@@ -1,0 +1,163 @@
+body {
+	font-family: sans-serif;		
+	background-color:#e6e7ff;
+	font-size:0.9em;
+}
+
+.pagecontents {
+	max-width:1000px;
+	min-width:290px;
+	margin: 0px auto;		
+	background-color:#e6e7ff;	
+}
+
+#waitmessage {
+	display:none;
+	padding:5px;	
+	width:10em;
+	margin:0px auto;	
+	font-size:medium;
+	background-color:#ffffe0;
+	text-align:center;
+	position:fixed;
+	left:5px;	
+	right:5px;
+}
+
+#tweetboxcontainer {
+	margin-top:0px;
+}
+
+#tweettextbox {
+	font-size:0.9em;		
+	font-family:sans-serif;
+	width:100%;
+	-moz-border-radius:8px;
+	-webkit-border-radius:8px;
+	-border-radius:8px;
+}
+
+#tweetbutton {
+	width:70%;
+	height:2em;
+}
+
+#tweetlengthbox {		
+	margin-left:5px;
+	height:2em;
+}
+
+.longtext {
+	background-color:#FF0000;
+	color:#FFFFFF;
+}
+
+.menubar {
+	text-align:left;	
+	background-color:#e6e7ff;		
+}
+
+.menuitem {
+	font-weight:bold;
+	text-decoration:none;
+}
+
+a img {
+	border:0px;
+}
+
+a {
+	color:#4D4D4D;
+}
+
+a:hover {	
+	color:#0000FF;
+}
+
+.tweetcontents {
+	min-height:40px;
+	background-color:#FFFFFF;
+	border:1px solid #bfbfbf;	
+	padding:4px;	
+	-moz-border-radius:8px;
+	-webkit-border-radius:8px;
+	-border-radius:8px;
+	margin:2px 0px;
+}
+
+.tweetcontents.mytweet {
+	border-left:4px solid #00ff00; 	
+} 
+
+.avatar {
+	float:left;
+	padding-right:1em;
+}
+
+.tweetusername {	
+	font-weight: bold;
+	color:#0000FF;
+}
+
+.tweettext {	
+}
+
+.tweetmeta {
+	
+}
+
+.tweetmeta, .tweetactions {	
+	color:#4d4d4d;;
+	font-size:x-small;
+}
+
+.tweetactions {
+	display:none;
+}
+
+.tweetactions.visible {
+	display:inline;
+}
+
+.tweetactionicon {
+	margin-left:6px;
+	margin-right:6px;
+	vertical-align:middle;	
+}
+
+#contentarea a {
+	text-decoration:none;
+}
+
+#footer {
+	border-top:10px solid #e6e7ff;
+}
+
+.userprofile {		
+	padding:15px;
+}
+
+.userinfotable td {	
+	padding:2px 5px;
+}
+
+.useractionslist li {
+	list-style-type:square;
+	padding:10px;
+}
+
+.userlistslist li {
+	list-style-type:square;
+	margin-left:0px;
+	padding:0px;
+}
+
+.userprofilesection {	
+	background-color:#e5e5e5;
+}
+
+
+.description {
+	display:inline;
+	font-style:italic;	
+}
