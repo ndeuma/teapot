@@ -72,6 +72,12 @@ body {
 	text-decoration:none;
 }
 
+#messagearea {
+	text-align:center;
+	background-color:#ffffe0;
+	font-weight:bold;
+}
+
 a img {
 	border:0px;
 }

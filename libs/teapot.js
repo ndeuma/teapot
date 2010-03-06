@@ -114,12 +114,12 @@ var teapot = {
 	
 	showPublicTimeline : function() {
 		$.getJSON(teapot.getTimelineUrl("public"), teapot.renderStatuses);
-		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus);	
+		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus);		
 	},
 	
 	showHomeTimeline : function() {		
 		$.getJSON(teapot.getTimelineUrl("home"), teapot.renderStatuses);	
-		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus);
+		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus);		
 	},
 	
 	showMyTimeline : function() {
@@ -214,7 +214,7 @@ var teapot = {
 		teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/friendships/create/" 
 			+ userId + ".xml", { screen_name : userName }, function(event) {
 				$(event.target).remove();
-				alert("You are now following " + userName);				
+				teapot.flashMessage("You are now following " + userName);				
 			});
 	},
 	
@@ -222,7 +222,7 @@ var teapot = {
 		teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/friendships/destroy/" 
 			+ userId + ".xml", { screen_name : userName }, function(event) {
 				$(event.target).remove();				
-				alert("You are no longer following " + userName);
+				teapot.flashMessage("You are no longer following " + userName);
 			});
 	},
 	
@@ -233,7 +233,7 @@ var teapot = {
 				if (queryResponse.results)
 					teapot.renderStatuses(queryResponse.results, true);
 				else
-					alert("No tweets found.");
+					teapot.flashMessage("No tweets found.");
 			});
 			$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus)	
 		}	
@@ -289,11 +289,11 @@ var teapot = {
 		var tweetMeta = $("<span>").addClass("tweetmeta").append(teapot.formatDateTime(dateTime))
 			.append(" from ").append(tweet.getSource());		
 		if (tweet.getInReplyToStatusId() != null) 
-			tweetMeta
-				.append(" in reply to ")
-				.append($("<a>")
+			tweetMeta				
+				.append($("<a>")				
 					.attr("href", "javascript:teapot.showSingleTweet('" + 
 						tweet.getInReplyToStatusId() + "')")
+					.append(" in reply to ")						
 					.append(tweet.getInReplyToScreenName()));
 		tweetMeta.appendTo(mainDiv);					
 
@@ -444,6 +444,11 @@ var teapot = {
 		$("#tweettextbox").attr(teapot.INPUT_BOX_STYLES["normal"]);
 		$("#tweetlengthbox").html("140");
 		teapot.showHomeTimeline();
+	},
+	
+	flashMessage : function(message) {
+		$("#messagearea").html(message);
+		$("#messagearea").show(1).delay(3000).hide(1);		
 	},
 	
 	showAbout : function() {
