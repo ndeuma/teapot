@@ -1,0 +1,168 @@
+body {
+	font-family:monospace;	
+	color:#FFFFFF;	
+	background-color:#4d4d4d;
+	font-size:0.9em;
+}
+
+.pagecontents {
+	max-width:1000px;
+	min-width:620px;
+	margin: 30px auto;
+	border:10px solid #000000;
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+	-border-radius:10px;	
+	background-color:#000000;	
+}
+
+.pagehead {
+	padding:15px;	
+}
+
+#waitmessage {
+	display:none;
+	padding:50px;	
+	width:10em;
+	margin:0px auto;	
+	font-size:xx-large;
+	color:#000000;
+	background-color:#ffffff;
+	text-align:center;
+	position:fixed;
+	left:50px;	
+	right:50px;		
+	-moz-border-radius:20px;
+	-webkit-border-radius:20px;
+	-border-radius:20px;	
+}
+
+#tweetboxcontainer {
+	margin-top:10px;
+}
+
+#tweettextbox {		
+	font-family:monospace;
+	width:70%;
+	border:1px solid #ffffff;
+	background-color:#000000;
+	color:#ffff00;
+}
+
+#tweetbutton {
+	height:2em;
+	border:1px solid #ffffff;
+	background-color:#000000;
+	color:#ffff00;
+	font-family:monospace;
+	font-size:0.9em;
+}
+
+#tweetlengthbox {		
+	margin-left:20px;
+	height:2em;
+}
+
+.longtext {
+}
+
+.menubar {
+	text-align:center;		
+	background-color:#000000;
+	padding:5px;		
+}
+
+.menuitem {
+	font-weight:bold;
+	text-decoration:none;
+}
+
+a img {
+	border:0px;
+}
+
+a {
+	color:#ffff00;
+}
+
+a:hover {	
+	color:#ff0000;
+}
+
+.tweetcontents {
+	padding:15px;	
+}
+
+.tweetcontents.mytweet {
+	border-left:4px solid #ffffff; 	
+} 
+
+.avatar {
+	float:left;
+	padding-right:1em;
+}
+
+.tweetusername {	
+	font-weight: bold;
+	color:#0000FF;
+}
+
+.tweettext {	
+	color:#ffffff;
+}
+
+.tweetmeta, .tweetactions {	
+	color:#bfbfbf;
+	font-size:x-small;
+}
+
+.tweetactions {
+	display:none;
+}
+
+.tweetactions.visible {
+	display:inline;
+}
+
+.tweetactionicon {
+	margin-left:6px;
+	margin-right:6px;
+	vertical-align:middle;	
+}
+
+#contentarea a {
+	text-decoration:none;
+}
+
+#footer {
+	border-top:10px solid #000000;
+}
+
+.userprofile {		
+	padding:15px;
+}
+
+.userinfotable td {	
+	padding:2px 5px;
+}
+
+.useractionslist li {
+	list-style-type:square;
+	padding:10px;
+}
+
+.userlistslist li {
+	list-style-type:square;
+	margin-left:0px;
+	padding:0px;
+}
+
+.userprofilesection {	
+	border:1px solid #ffffff;
+}
+
+
+.description {
+	display:inline;
+	font-style:italic;	
+}
