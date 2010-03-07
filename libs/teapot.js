@@ -496,9 +496,9 @@ var teapot = {
 		// Replace multiple CR, LF, tab characters by one space.
 		tweetText = tweetText.replace(/[\n\r\t]+/g, " ");		
 		// Hashtag at start of tweet
-		tweetText = tweetText.replace(/^(#[\w\d]+([\+\-]?))/g, teapot.hashtagLink("$1"));
+		tweetText = tweetText.replace(/^(#[\w\d]+)/g, teapot.hashtagLink("$1"));
 		// Hashtag at end of tweet
-		tweetText = tweetText.replace(/ (#[\w\d]+([\+\-]?))/g, " " + teapot.hashtagLink("$1"));		
+		tweetText = tweetText.replace(/ (#[\w\d]+)/g, " " + teapot.hashtagLink("$1"));		
 		tweetText = tweetText.replace(/^(@([\w\d]+))/g, teapot.userNameLink("$2")); 			
 		tweetText = tweetText.replace(/([^\w])@([\w\d]+)/g, "$1" + teapot.userNameLink("$2"));
 		tweetText = tweetText.replace(/((https?|ftp):\/\/[\w\d.\/\-\?\[\]\*_&~#%\+=:{},]+)/g, teapot.urlLink("$1"));
