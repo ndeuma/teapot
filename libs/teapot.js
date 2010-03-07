@@ -422,7 +422,10 @@ var teapot = {
 				.append(teapot.replaceRegexps(tweet.getText()))
 				.append($("<br>")));
 		
-		var tweetMeta = $("<span>").addClass("tweetmeta").append(teapot.formatDateTime(dateTime))
+		var tweetMeta = $("<span>").addClass("tweetmeta")
+			.append($("<a>")
+				.attr("href", "javascript:teapot.showSingleTweet('" + tweet.getId() + "')")
+				.append(teapot.formatDateTime(dateTime)))
 			.append(" from ").append(tweet.getSource());		
 		if (tweet.getInReplyToStatusId() != null) 
 			tweetMeta				
@@ -490,6 +493,8 @@ var teapot = {
 	},
 	
 	replaceRegexps : function(tweetText) {
+		// Replace multiple CR, LF, tab characters by one space.
+		tweetText = tweetText.replace(/[\n\r\t]+/g, " ");		
 		// Hashtag at start of tweet
 		tweetText = tweetText.replace(/^(#[\w\d]+([\+\-]?))/g, teapot.hashtagLink("$1"));
 		// Hashtag at end of tweet

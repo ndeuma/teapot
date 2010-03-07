@@ -24,6 +24,7 @@
 					assertDisplay("An # example", "An # example");
 					assertDisplay("An #. example", "An #. example");
 					assertDisplay("An#example", "An#example");
+					assertDisplay("A " + hashtagLink("#newline") + " example", "A\n\n#newline example");
 					assertDisplay("Oh:" + hashtagLink("#example"), "Oh:#example");
 					assertDisplay(userNameLink("user") + ": hello", "@user: hello");					
 					assertDisplay("mail@server.com", "mail@server.com");					
