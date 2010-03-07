@@ -120,7 +120,7 @@ function JSONTwitterAPI(protocol, rateLimitCallback) {
 	};
 	
 	this.showFavorites = function(userId, callback) {
-		var url = teapot.PROTOCOL + "api.twitter.com/1/favorites.json?count=200&callback=?";
+		var url = this.protocol + "api.twitter.com/1/favorites.json?count=200&callback=?";
 		if (userId)
 			url += "&id=" + userId
 		$.getJSON(url, callback);
