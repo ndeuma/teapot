@@ -264,47 +264,56 @@ var teapot = {
 	},
 	
 	showPublicTimeline : function() {		
-		teapot.api.showPublicTimeline(teapot.renderStatuses);		
+		teapot.api.showPublicTimeline(teapot.renderStatuses);
+		teapot.highlightTimelineMenuItem("#public_timeline");				
 	},
 	
 	showHomeTimeline : function() {		
 		teapot.api.showHomeTimeline(teapot.renderStatuses);			
+		teapot.highlightTimelineMenuItem("#home_timeline");
 	},
 	
 	showMyTimeline : function() {
 		teapot.api.showUserTimeline(null, teapot.renderStatuses);
+		teapot.highlightTimelineMenuItem("#my_timeline");
 	},
 	
 	showAnyUserTimeline : function() {
 		var userName = window.prompt("Enter a user name:", "");
-		if (userName != null)
-			teapot.api.showUserTimelineByName(userName, teapot.renderStatuses);
+		if (userName != null) 
+			teapot.api.showUserTimelineByName(userName, teapot.renderStatuses);								
 	},
 	
 	showUserTimeline : function(userId) {		
 		teapot.api.showUserTimeline(userId, teapot.renderStatuses);		
+		teapot.highlightTimelineMenuItem("#user_timeline");
 	},	
 	
 	showUserTimelineByName : function(userName) {
 		teapot.api.showUserTimelineByName(userName, teapot.renderStatuses);
+		teapot.highlightTimelineMenuItem("#user_timeline");
 	},
 	
 	showSingleTweet : function (tweetId) {
 		teapot.api.showSingleTweet(tweetId, teapot.renderStatuses);		
+		teapot.highlightTimelineMenuItem(null);
 	},
 	
 	showMentions : function() {
 		teapot.api.showMentions(teapot.renderStatuses);		
+		teapot.highlightTimelineMenuItem("#mentions_timeline");
 	},
 	
 	showFavorites : function(userId) {
-		teapot.api.showFavorites(userId, teapot.renderStatuses);			
+		teapot.api.showFavorites(userId, teapot.renderStatuses);
+		teapot.highlightTimelineMenuItem("#favorites_timeline");			
 	},
 	
 	showHashTag : function(hashTag) {
 		teapot.api.showHashTag(hashTag, function(queryResponse) {
 			return teapot.renderStatuses(queryResponse, true);
 		});		
+		teapot.highlightTimelineMenuItem("#search_timeline");
 	},
 	
 	showUserProfile : function(userId, userName) {
@@ -313,12 +322,13 @@ var teapot = {
 				user : user,
 				relation : relation.relationship
 			}));
-		});	
+		});
+		teapot.highlightTimelineMenuItem(null);	
 	},
 	
 	replyToTweet : function(tweetId, userName) {
 		teapot.currentTweetProperties.replyToId = tweetId;
-		$("#tweettextbox").val("@" + userName + " ").focus();
+		$("#tweettextbox").val("@" + userName + " ").focus();		
 	},
 	
 	retweet : function(tweetId) {
@@ -356,11 +366,12 @@ var teapot = {
 		var searchTerm = window.prompt("Enter a search query:", "");
 		if (searchTerm != null) {
 			teapot.api.doSearch(searchTerm, function(queryResponse) {
-				if (queryResponse.results)
+				if (queryResponse.results) 
 					teapot.renderStatuses(queryResponse.results, true);
 				else
 					teapot.flashMessage("No tweets found.");
 			});			
+			teapot.highlightTimelineMenuItem("#search_timeline");
 		}	
 	},
 	
@@ -534,6 +545,12 @@ var teapot = {
 	flashMessage : function(message) {
 		$("#messagearea").html(message);
 		$("#messagearea").show(1).delay(3000).hide(1);		
+	},
+	
+	highlightTimelineMenuItem : function(id) {
+		$("a[id$='_timeline']").removeClass("highlightedMenuItem");
+		if (id)		
+			$(id).addClass("highlightedMenuItem");
 	},
 	
 	showAbout : function() {

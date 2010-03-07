@@ -68,8 +68,21 @@ body {
 }
 
 .menuitem {
+	padding:2px;
 	font-weight:bold;
 	text-decoration:none;
+	border-left:1px solid #FFFFFF;
+	border-right:1px solid #4D4D4D;
+	border-top:1px solid #FFFFFF;
+	border-bottom:1px solid #4D4D4D;
+}
+
+.highlightedMenuItem {
+	/* border-bottom:2px solid #4D4D4D; */
+	border-left:1px solid #FFFFFF;
+	border-right:1px solid #FFFFFF;
+	border-top:1px solid #FFFFFF;
+	border-bottom:1px solid #FFFFFF;	
 }
 
 #messagearea {
