@@ -2,7 +2,19 @@ function outerHtml(stuff) {
 	return $("<div>").append(stuff).html();
 }
 
-function TweetWrapper(tweet, isSearchResult) {
+// From http://taiyolab.com/mbtweet
+var Utils = {
+	r : function() {
+		return (((1 + Math.random()) * 0x10000) | 1).toString(16).substring(1);
+	},
+
+	guid : function() {
+		return (Utils.r() + Utils.r() + "-" + Utils.r() + "-" + Utils.r() + "-" + Utils.r() + "-" + Utils.r() + Utils.r() + Utils.r());
+	}	
+};
+
+
+function Tweet(tweet, isSearchResult) {
 	this.tweet = tweet;
 	this.isSearchResult = isSearchResult;
 	
@@ -51,11 +63,167 @@ function TweetWrapper(tweet, isSearchResult) {
 	};
 }
 
-var teapot = {
 
-	PROTOCOL : "https://",
+function JSONTwitterAPI(protocol, rateLimitCallback) {
 	
-	RATE_LIMIT_STATUS_URL : "https://api.twitter.com/1/account/rate_limit_status.json?callback=?",
+	this.protocol = protocol;
+	
+	this.rateLimitCallback = rateLimitCallback;
+	
+	this.RATE_LIMIT_STATUS_URL = "https://api.twitter.com/1/account/rate_limit_status.json?callback=?";
+	
+	this.verifyCredentials = function(callback) {
+		$.getJSON(this.protocol + "api.twitter.com/1/account/verify_credentials.json?callback=?", callback);
+	};
+	
+	this.getTimelineUrl = function (timelineType, userId, userName) {
+		var result = this.protocol + "api.twitter.com/1/statuses/" + timelineType + "_timeline.json?count=200&callback=?";
+		if (userId)
+			result += "&user_id=" + userId
+		if (userName)		
+			result += "&screen_name=" + userName		
+		return result;
+	};
+	
+	this.showPublicTimeline = function(callback) {
+		$.getJSON(this.getTimelineUrl("public"), callback);
+		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback);
+	};
+	
+	this.showHomeTimeline = function(callback) {		
+		$.getJSON(this.getTimelineUrl("home"), callback);	
+		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback);		
+	};
+	
+	this.showMyTimeline = function(callback) {
+		this.showUserTimeline(null, callback);
+	};
+	
+	this.showUserTimeline = function(userId, callback) {		
+		$.getJSON(this.getTimelineUrl("user", userId), callback);	
+		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback);
+	};	
+	
+	this.showUserTimelineByName = function(userName, callback) {
+		$.getJSON(this.getTimelineUrl("user", null, userName), callback);	
+		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback);
+	};
+	
+	this.showSingleTweet = function (tweetId, callback) {
+		$.getJSON(this.protocol + "api.twitter.com/1/statuses/show/" + tweetId + ".json?callback=?", callback);	
+		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback);
+	};
+	
+	this.showMentions = function(callback) {
+		$.getJSON(this.protocol + "api.twitter.com/1/statuses/mentions.json?count=200&callback=?", callback);
+		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback);	
+	};
+	
+	this.showFavorites = function(userId, callback) {
+		var url = teapot.PROTOCOL + "api.twitter.com/1/favorites.json?count=200&callback=?";
+		if (userId)
+			url += "&id=" + userId
+		$.getJSON(url, callback);
+		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback)	
+	};
+	
+	this.showHashTag = function(hashTag, callback) {
+		$.getJSON(this.protocol + "search.twitter.com/search.json?q=" + escape(hashTag) + "&callback=?", function(queryResponse) {
+			return callback(queryResponse.results, true);
+		});
+		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback)
+	};
+	
+	this.showUserProfile = function(userId, userName, currentUser, callback) {
+		var proto = this.protocol;		
+		$.getJSON(proto + "api.twitter.com/1/users/show.json?user_id=" 
+			+ userId + "&callback=?", function(user) {				
+			$.getJSON(proto + "api.twitter.com/1/friendships/show.json?target_id=" 
+				+ userId + "&source_id=" + currentUser.id + "&callback=?", function(relation) {
+					callback(user, relation);
+				});		
+		});
+		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback);	
+	};
+	
+	this.retweet = function(tweetId, callback) {	 
+		this.sendPostRequest(this.protocol + "api.twitter.com/1/statuses/retweet/" + 
+			tweetId + ".xml", { }, callback);		
+	};
+	
+	this.fav = function(tweetId, callback) {		
+		this.sendPostRequest(this.protocol + "api.twitter.com/1/favorites/create/" + 
+			tweetId + ".xml", { }, callback);				
+	};
+	
+	this.deleteTweet = function(tweetId, callback) {		
+		this.sendPostRequest(this.protocol + "api.twitter.com/1/statuses/destroy/" + 
+			tweetId + ".xml", { }, callback);
+	};
+	
+	this.follow = function(userId, userName, callback) {
+		this.sendPostRequest(this.protocol + "api.twitter.com/1/friendships/create/" 
+			+ userId + ".xml", { screen_name : userName }, callback);
+	};
+	
+	this.unfollow = function(userId, userName, callback) {
+		this.sendPostRequest(this.protocol + "api.twitter.com/1/friendships/destroy/" 
+			+ userId + ".xml", { screen_name : userName }, callback);
+	};
+	
+	this.doSearch = function(callback) {				
+		$.getJSON(this.protocol + "search.twitter.com/search.json?q=" + escape(searchTerm) + 
+			"&callback=?", callback);
+		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback);			
+	};
+	
+	this.sendTweet = function(tweetText, replyToId, callback) {
+		this.sendPostRequest(this.protocol + "api.twitter.com/1/statuses/update.xml", {
+			"status" : tweetText, 
+			"in_reply_to_status_id" : replyToId
+		}, callback);			
+	},
+	
+	this.sendPostRequest = function(url, fields, postHandler) {
+		// Set up the target frame that is receiving the response to the POST request
+		var targetFrameId = Utils.guid();
+		$("<iframe>").attr("id", targetFrameId).attr("name", targetFrameId)
+			.attr("style", "display:none")
+			.appendTo($("#tweetboxcontainer"));
+		$("#" + targetFrameId).bind("load", function(event) {
+			// Remove the target frame that received the response to the POST request		
+			$(event.target).remove();
+			postHandler();
+		});
+												
+		// Set up the form inside the post frame												
+		var postForm = $("<form>")
+			.attr("method", "post")
+			.attr("action", url)
+			.attr("target", targetFrameId);		
+		for (var fieldName in fields) {			
+			if (fieldName != undefined && fields[fieldName] != null)
+				postForm.prepend($("<input>").attr("type", "hidden").attr("name", fieldName).attr("value", fields[fieldName])); 										
+		}
+		
+		// Create a new post frame		
+		$("#tweetpostframe").remove();
+		$("<iframe id='tweetpostframe' name='tweetpostframe' style='display:none;'></iframe>").appendTo($("#tweetboxcontainer"));
+				
+		// Write the contents to the post frame, triggering the submission of the form				
+		var postFrameDoc = $("#tweetpostframe")[0].contentWindow.document;		
+		postFrameDoc.open();
+		// We need a surrounding div because html() only writes the inner HTML.									
+		var frameContents = $("<div>")
+			.prepend(postForm).html() + 
+			"<script type=\"text/javascript\">window.onload = function(){ document.forms[0].submit(); };</script>";						
+		postFrameDoc.write(frameContents);					
+		postFrameDoc.close();		
+		return false;			
+	}				
+}
+
+var teapot = {
 	
 	INPUT_BOX_STYLES : {
 		"too_long": {
@@ -73,116 +241,79 @@ var teapot = {
 	
 	currentUser : null,
 	
+	api : null,
+	
 	currentTweetProperties : {
 		replyToId : null,
 	},
-	
-	// From http://taiyolab.com/mbtweet
-	r : function()
-	{
-		return (((1 + Math.random()) * 0x10000) | 1).toString(16).substring(1);
-	},
 
-	guid : function()
-	{
-		return (teapot.r() + teapot.r() + "-" + teapot.r() + "-" + teapot.r() + "-" + teapot.r() + "-" + teapot.r() + teapot.r() + teapot.r());
-	},
-
-	init : function() {
+	init : function(api) {
+		teapot.api = api;
 		$("#tweetlengthbox").html("140");	
-		$("#tweettextbox").bind("keyup click", teapot.handleTweetTextBoxChanged)		
-		$.getJSON(teapot.PROTOCOL + "api.twitter.com/1/account/verify_credentials.json?callback=?", function(user){			
+		$("#tweettextbox").bind("keyup click", teapot.handleTweetTextBoxChanged)
+		teapot.api.verifyCredentials(function(user) {			
 			teapot.currentUser = user;
 			$("#waitmessage").ajaxStart(function(){ $("#waitmessage").fadeIn("slow"); });
 			$("#waitmessage").ajaxStop(function(){ $("#waitmessage").fadeOut("slow"); });						
 			$("#waitmessage").ajaxError(function(event, request, options, thrownError){ 
-				console.log(event, request, options, thrownError); 
-			});			
+				console.log(event, request, options, thrownError);
+			});
 			$("#username").html(user.screen_name);					
-			teapot.showHomeTimeline();			
-		});
+			teapot.showHomeTimeline();	 
+		});				
 	},
 	
-	getTimelineUrl : function (timelineType, userId, userName) {
-		var result = teapot.PROTOCOL + "api.twitter.com/1/statuses/" + timelineType + "_timeline.json?count=200&callback=?";
-		if (userId)
-			result += "&user_id=" + userId
-		if (userName)		
-			result += "&screen_name=" + userName		
-		return result;
-	},
-	
-	showPublicTimeline : function() {
-		$.getJSON(teapot.getTimelineUrl("public"), teapot.renderStatuses);
-		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus);		
+	showPublicTimeline : function() {		
+		teapot.api.showPublicTimeline(teapot.renderStatuses);		
 	},
 	
 	showHomeTimeline : function() {		
-		$.getJSON(teapot.getTimelineUrl("home"), teapot.renderStatuses);	
-		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus);		
+		teapot.api.showHomeTimeline(teapot.renderStatuses);			
 	},
 	
 	showMyTimeline : function() {
-		teapot.showUserTimeline();
+		teapot.api.showUserTimeline(null, teapot.renderStatuses);
 	},
 	
 	showAnyUserTimeline : function() {
 		var userName = window.prompt("Enter a user name:", "");
 		if (userName != null)
-			teapot.showUserTimelineByName(userName);
+			teapot.api.showUserTimelineByName(userName, teapot.renderStatuses);
 	},
 	
 	showUserTimeline : function(userId) {		
-		$.getJSON(teapot.getTimelineUrl("user", userId), teapot.renderStatuses);	
-		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus)
+		teapot.api.showUserTimeline(userId, teapot.renderStatuses);		
 	},	
 	
 	showUserTimelineByName : function(userName) {
-		$.getJSON(teapot.getTimelineUrl("user", null, userName), teapot.renderStatuses);	
-		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus)
+		teapot.api.showUserTimelineByName(userName, teapot.renderStatuses);
 	},
 	
 	showSingleTweet : function (tweetId) {
-		$.getJSON(teapot.PROTOCOL + "api.twitter.com/1/statuses/show/" + tweetId + ".json?callback=?", teapot.renderStatuses);	
-		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus)
+		teapot.api.showSingleTweet(tweetId, teapot.renderStatuses);		
 	},
 	
 	showMentions : function() {
-		$.getJSON(teapot.PROTOCOL + "api.twitter.com/1/statuses/mentions.json?count=200&callback=?", teapot.renderStatuses);
-		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus)	
+		teapot.api.showMentions(teapot.renderStatuses);		
 	},
 	
 	showFavorites : function(userId) {
-		var url = teapot.PROTOCOL + "api.twitter.com/1/favorites.json?count=200&callback=?";
-		if (userId)
-			url += "&id=" + userId
-		$.getJSON(url, teapot.renderStatuses);
-		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus)	
+		teapot.api.showFavorites(userId, teapot.renderStatuses);			
 	},
 	
 	showHashTag : function(hashTag) {
-		$.getJSON(teapot.PROTOCOL + "search.twitter.com/search.json?q=" + escape(hashTag) + "&callback=?", function(queryResponse) {
-			return teapot.renderStatuses(queryResponse.results, true);
-		});
-		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus)
+		teapot.api.showHashTag(hashTag, function(queryResponse) {
+			return teapot.renderStatuses(queryResponse, true);
+		});		
 	},
 	
-	showUserProfile : function(userId, userName) {		
-		$.getJSON(teapot.PROTOCOL + "api.twitter.com/1/users/show.json?user_id=" 
-			+ userId + "&callback=?", function(user) {
-				
-			$.getJSON(teapot.PROTOCOL + "api.twitter.com/1/friendships/show.json?target_id=" 
-				+ userId + "&source_id=" + teapot.currentUser.id + "&callback=?", function(relation) {
-				
-				var template = TrimPath.parseDOMTemplate("template_user_profile");
-				var output = template.process({
-					user : user,
-					relation : relation.relationship
-				});
-				$("#contentarea").html(output);
-			});		
-		});
-		$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus);	
+	showUserProfile : function(userId, userName) {
+		teapot.api.showUserProfile(userId, userName, teapot.currentUser, function(user, relation) {						
+			$("#contentarea").html(TrimPath.parseDOMTemplate("template_user_profile").process({
+				user : user,
+				relation : relation.relationship
+			}));
+		});	
 	},
 	
 	replyToTweet : function(tweetId, userName) {
@@ -191,51 +322,45 @@ var teapot = {
 	},
 	
 	retweet : function(tweetId) {
-		if (window.confirm("Retweet to your followers?")) 
-			teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/statuses/retweet/" + 
-				tweetId + ".xml", { }, teapot.handleTweetPosted);		
+		if (window.confirm("Retweet to your followers?"))
+			teapot.api.retweet(tweetId, teapot.handleTweetPosted);		
 	},
 	
 	fav : function(tweetId) {		
-		teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/favorites/create/" + 
-			tweetId + ".xml", { }, function(event) {
-				$(event.target).remove();
-				teapot.showFavorites();
-			});				
+		teapot.api.fav(tweetId, function () {
+			teapot.flashMessage("Favorite added!");
+		});					
 	},
 	
 	deleteTweet : function(tweetId) {
 		if (window.confirm("Delete this tweet?"))
-			teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/statuses/destroy/" + 
-				tweetId + ".xml", { }, teapot.handleTweetPosted);
+			teapot.api.deleteTweet(tweetId, function() {
+				$("#_tweetcontents_" + tweetId).hide("fast");
+				teapot.flashMessage("Tweet deleted");
+			});			
 	},
 	
 	follow : function(userId, userName) {
-		teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/friendships/create/" 
-			+ userId + ".xml", { screen_name : userName }, function(event) {
-				$(event.target).remove();
-				teapot.flashMessage("You are now following " + userName);				
-			});
+		teapot.api.follow(userId, userName, function () {
+			teapot.flashMessage("You are now following " + userName);
+		});		
 	},
 	
 	unfollow : function(userId, userName) {
-		teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/friendships/destroy/" 
-			+ userId + ".xml", { screen_name : userName }, function(event) {
-				$(event.target).remove();				
-				teapot.flashMessage("You are no longer following " + userName);
-			});
+		teapot.api.unfollow(userId, userName, function () {
+			teapot.flashMessage("You are no longer following " + userName);
+		});		
 	},
 	
 	doSearch : function() {		
 		var searchTerm = window.prompt("Enter a search query:", "");
 		if (searchTerm != null) {
-			$.getJSON(teapot.PROTOCOL + "search.twitter.com/search.json?q=" + escape(searchTerm) + "&callback=?", function(queryResponse) {
+			teapot.api.doSearch(searchTerm, function(queryResponse) {
 				if (queryResponse.results)
 					teapot.renderStatuses(queryResponse.results, true);
 				else
 					teapot.flashMessage("No tweets found.");
-			});
-			$.getJSON(teapot.RATE_LIMIT_STATUS_URL, teapot.renderRateLimitStatus)	
+			});			
 		}	
 	},
 	
@@ -243,10 +368,10 @@ var teapot = {
 		// statuses is a list of tweets
 		if (statuses.length != undefined) 			
 			$("#contentarea").html($.map(statuses, function(status){
-				return teapot.formatTweet(new TweetWrapper(status, isSearchResult));
+				return teapot.formatTweet(new Tweet(status, isSearchResult));
 			}).join(""));					
 		else 
-			$("#contentarea").html(teapot.formatTweet(new TweetWrapper(statuses, isSearchResult)));
+			$("#contentarea").html(teapot.formatTweet(new Tweet(statuses, isSearchResult)));
 		$(".tweetcontents").mouseenter(function (event) {
 			$(event.target).children(".tweetactions").fadeIn("fast");
 		});
@@ -393,52 +518,12 @@ var teapot = {
 	},
 	
 	sendTweet : function() {
-		teapot.sendPostRequest(teapot.PROTOCOL + "api.twitter.com/1/statuses/update.xml", {
-			"status" : $("#tweettextbox").val(), 
-			"in_reply_to_status_id" : teapot.currentTweetProperties.replyToId
-		}, teapot.handleTweetPosted);	
-		
+		teapot.api.sendTweet($("#tweettextbox").val(), teapot.currentTweetProperties.replyToId, 
+			teapot.handleTweetPosted);		
 		return false;
 	},
-
-	// From http://taiyolab.com/mbtweet	
-	sendPostRequest : function(url, fields, postHandler) {
-		// Set up the target frame that is receiving the response to the POST request
-		var targetFrameId = teapot.guid();
-		$("<iframe>").attr("id", targetFrameId).attr("name", targetFrameId)
-			.attr("style", "display:none")
-			.appendTo($("#tweetboxcontainer"));
-		$("#" + targetFrameId).bind("load", postHandler);
-												
-		// Set up the form inside the post frame												
-		var postForm = $("<form>")
-			.attr("method", "post")
-			.attr("action", url)
-			.attr("target", targetFrameId);		
-		for (var fieldName in fields) {			
-			if (fieldName != undefined && fields[fieldName] != null)
-				postForm.prepend($("<input>").attr("type", "hidden").attr("name", fieldName).attr("value", fields[fieldName])); 										
-		}
-		
-		// Create a new post frame		
-		$("#tweetpostframe").remove();
-		$("<iframe id='tweetpostframe' name='tweetpostframe' style='display:none;'></iframe>").appendTo($("#tweetboxcontainer"));
-				
-		// Write the contents to the post frame, triggering the submission of the form				
-		var postFrameDoc = $("#tweetpostframe")[0].contentWindow.document;		
-		postFrameDoc.open();
-		// We need a surrounding div because html() only writes the inner HTML.									
-		var frameContents = $("<div>")
-			.prepend(postForm).html() + 
-			"<script type=\"text/javascript\">window.onload = function(){ document.forms[0].submit(); };</script>";						
-		postFrameDoc.write(frameContents);					
-		postFrameDoc.close();		
-		return false;			
-	},
 	
-	handleTweetPosted : function(event) {		
-		// Remove the target frame that received the response to the POST request
-		$(event.target).remove();
+	handleTweetPosted : function(event) {				
 		teapot.currentTweetProperties.replyToId = null;				
 		$("#tweettextbox").val("");
 		$("#tweettextbox").attr(teapot.INPUT_BOX_STYLES["normal"]);

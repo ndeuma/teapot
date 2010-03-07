@@ -11,8 +11,8 @@
 		<script type="text/javascript" src="libs/trimpath-template-1.0.38.js"></script>
 		<script type="text/javascript" src="libs/teapot.js"></script>		
 		<script type="text/javascript">
-		$(function() {			
-			teapot.init();			
+		$(function() {						
+			teapot.init(new JSONTwitterAPI("https://", teapot.renderRateLimitStatus));			
 		});
 		</script>
 	</head>
