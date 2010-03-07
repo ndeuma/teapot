@@ -65,8 +65,9 @@
 					${user.location}<br />
 				{/if}					
 				{if user.url}
-					<a href="${user.url}">${user.url}</a>
+					<a href="${user.url}" target="_blank">${user.url}</a><br />
 				{/if}	
+				Joined Twitter on: ${teapot.formatDateTime(new Date(user.created_at), false)}
 				</p>
 				<p>${user.description}</p>										
 			</td>
@@ -139,15 +140,43 @@
 						</td>
 					</tr>
 					<tr>
-						<td>Friends</td><td>${user.friends_count}</td>
+						<td>Friends</td>
+						<td>
+							<!-- <a href="javascript:teapot.showFriends('${user.id}', '${user.screen_name}', -1)"> -->
+							${user.friends_count}
+							<!-- </a> -->
+						</td>
 					</tr>
 					<tr>									
-						<td>Followers</td><td>${user.followers_count}</td>
+						<td>Followers</td>
+						<td>
+							<!-- <a href="javascript:teapot.showFollowers('${user.id}', '${user.screen_name}', -1)"> -->
+							${user.followers_count}
+							<!-- </a> -->
+						</td>
 					</tr>								
 				</table>						
 			</td>    		
 		</tr>
 	</table>											
+</textarea>
+
+<textarea id="template_user" cols="0" rows="0" style="display:none;">
+	<div class="itemcontents" id="${id}">
+		<a href="javascript:teapot.showUserProfile('${id}', '${screen_name}')">			
+			<img class="avatar" src="${profile_image_url}" width="40" height="40"
+				alt="Profile image of ${screen_name}" />			
+		</a>
+		<span class="tweetusername">
+			<a href="javascript.teapot.showUserTimeline('${id}', '${screen_name}')">
+				${screen_name}
+			</a>
+		</span><br />		
+		<span class="smallitemtext">
+		${description}
+		</span>
+		<br clear="all" />
+	</div>
 </textarea>
 				
 	</body>

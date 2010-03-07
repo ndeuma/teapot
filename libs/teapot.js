@@ -182,7 +182,7 @@ function JSONTwitterAPI(protocol, rateLimitCallback) {
 			"status" : tweetText, 
 			"in_reply_to_status_id" : replyToId
 		}, callback);			
-	},
+	};
 	
 	this.sendPostRequest = function(url, fields, postHandler) {
 		// Set up the target frame that is receiving the response to the POST request
@@ -220,7 +220,18 @@ function JSONTwitterAPI(protocol, rateLimitCallback) {
 		postFrameDoc.write(frameContents);					
 		postFrameDoc.close();		
 		return false;			
-	}				
+	};
+	
+	this.showUsers = function(role, userId, userName, cursor, callback) {
+		var url = this.protocol + "api.twitter.com/1/statuses/" + role + ".json?" + 
+			"user_id=" + userId +		
+			"&screen_name=" + userName +		
+			"&cursor=" + cursor +
+			"&callback=?";
+		$.getJSON(url, function(users) {
+			callback(role, users);
+		});
+	};			
 }
 
 var teapot = {
@@ -375,6 +386,23 @@ var teapot = {
 		}	
 	},
 	
+	showFriends : function(userId, userName, cursor) {
+		teapot.api.showUsers("friends", userId, userName, cursor, teapot.renderUsers);
+		teapot.highlightTimelineMenuItem(null);
+	},
+	
+	showFollowers : function(userId, userName, cursor) {
+		teapot.api.showUsers("followers", userId, userName, cursor, teapot.renderUsers);
+		teapot.highlightTimelineMenuItem(null);
+	},
+	
+	renderUsers : function(role, result) {
+		var template = TrimPath.parseDOMTemplate("template_user");		
+		$("#contentarea").html($.map(result.users, function(user) {
+			return template.process(user);
+		}).join(""));
+	},
+	
 	renderStatuses : function(statuses, isSearchResult) {
 		// statuses is a list of tweets
 		if (statuses.length != undefined) 			
@@ -383,10 +411,10 @@ var teapot = {
 			}).join(""));					
 		else 
 			$("#contentarea").html(teapot.formatTweet(new Tweet(statuses, isSearchResult)));
-		$(".tweetcontents").mouseenter(function (event) {
+		$(".itemcontents").mouseenter(function (event) {
 			$(event.target).children(".tweetactions").fadeIn("fast");
 		});
-		$(".tweetcontents").mouseleave(function (event) {
+		$(".itemcontents").mouseleave(function (event) {
 			$(event.target).children(".tweetactions").fadeOut("fast");
 		});			
 	},
@@ -402,7 +430,7 @@ var teapot = {
 		var authorClass = isMyTweet ? "mytweet" : "othertweet";
 		
 		var mainDiv = $("<div>")
-			.addClass("tweetcontents").addClass(authorClass)
+			.addClass("itemcontents").addClass(authorClass)
 			.attr("id", "_tweetcontents_" + tweet.getId())
 			.append($("<a>")
 				.attr("href", "javascript:teapot.showUserProfile('" + tweet.getUserId() + "', '" + tweet.getUserScreenName() + "')")
@@ -418,14 +446,14 @@ var teapot = {
 					.append(tweet.getUserScreenName()))
 				.append(" "))
 			.append($("<span>")
-				.addClass("tweettext")
+				.addClass("itemtext")
 				.append(teapot.replaceRegexps(tweet.getText()))
 				.append($("<br>")));
 		
-		var tweetMeta = $("<span>").addClass("tweetmeta")
+		var tweetMeta = $("<span>").addClass("smallitemtext")
 			.append($("<a>")
 				.attr("href", "javascript:teapot.showSingleTweet('" + tweet.getId() + "')")
-				.append(teapot.formatDateTime(dateTime)))
+				.append(teapot.formatDateTime(dateTime, true)))
 			.append(" from ").append(tweet.getSource());		
 		if (tweet.getInReplyToStatusId() != null) 
 			tweetMeta				
@@ -480,16 +508,19 @@ var teapot = {
 		return outerHtml(mainDiv);
 	},
 	
-	formatDateTime : function(date) {
+	formatDateTime : function(date, includeTime) {
 		// Unfortunately, jQuery can only format the date, not date and time.
 		var timeStr = "";
-		if (date.getHours() < 10)
+		if (includeTime) {
+			timeStr += ", ";
+			if (date.getHours() < 10)
 			timeStr += "0";
-		timeStr += date.getHours() + ":";		
-		if (date.getMinutes() < 10)
-			timeStr += "0";
-		timeStr += date.getMinutes();							
-		return $.datepicker.formatDate("yy-mm-dd, " + timeStr, date);
+			timeStr += date.getHours() + ":";		
+			if (date.getMinutes() < 10)
+				timeStr += "0";
+			timeStr += date.getMinutes();	
+		}									
+		return $.datepicker.formatDate("yy-mm-dd" + timeStr, date);
 	},
 	
 	replaceRegexps : function(tweetText) {

@@ -103,12 +103,12 @@ a:hover {
 	color:#0000FF;
 }
 
-.tweetcontents {
+.itemcontents {
 	padding:15px;
 	border-bottom:1px dotted #e5e5e5;
 }
 
-.tweetcontents.mytweet {
+.itemcontents.mytweet {
 	border-left:4px solid #00ff00; 	
 } 
 
@@ -122,10 +122,10 @@ a:hover {
 	color:#0000FF;
 }
 
-.tweettext {	
+.itemtext {	
 }
 
-.tweetmeta, .tweetactions {	
+.smallitemtext, .tweetactions {	
 	color:#4d4d4d;;
 	font-size:x-small;
 }
