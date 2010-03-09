@@ -64,11 +64,9 @@ function Tweet(tweet, isSearchResult) {
 }
 
 
-function JSONTwitterAPI(protocol, rateLimitCallback) {
+function JSONTwitterAPI(protocol) {
 	
 	this.protocol = protocol;
-	
-	this.rateLimitCallback = rateLimitCallback;
 	
 	this.RATE_LIMIT_STATUS_URL = "https://api.twitter.com/1/account/rate_limit_status.json?callback=?";
 	
@@ -86,13 +84,11 @@ function JSONTwitterAPI(protocol, rateLimitCallback) {
 	};
 	
 	this.showPublicTimeline = function(callback) {
-		$.getJSON(this.getTimelineUrl("public"), callback);
-		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback);
+		$.getJSON(this.getTimelineUrl("public"), callback);	
 	};
 	
 	this.showHomeTimeline = function(callback) {		
-		$.getJSON(this.getTimelineUrl("home"), callback);	
-		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback);		
+		$.getJSON(this.getTimelineUrl("home"), callback);				
 	};
 	
 	this.showMyTimeline = function(callback) {
@@ -101,37 +97,31 @@ function JSONTwitterAPI(protocol, rateLimitCallback) {
 	
 	this.showUserTimeline = function(userId, callback) {		
 		$.getJSON(this.getTimelineUrl("user", userId), callback);	
-		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback);
 	};	
 	
 	this.showUserTimelineByName = function(userName, callback) {
-		$.getJSON(this.getTimelineUrl("user", null, userName), callback);	
-		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback);
+		$.getJSON(this.getTimelineUrl("user", null, userName), callback);			
 	};
 	
 	this.showSingleTweet = function (tweetId, callback) {
-		$.getJSON(this.protocol + "api.twitter.com/1/statuses/show/" + tweetId + ".json?callback=?", callback);	
-		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback);
+		$.getJSON(this.protocol + "api.twitter.com/1/statuses/show/" + tweetId + ".json?callback=?", callback);			
 	};
 	
 	this.showMentions = function(callback) {
-		$.getJSON(this.protocol + "api.twitter.com/1/statuses/mentions.json?count=200&callback=?", callback);
-		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback);	
+		$.getJSON(this.protocol + "api.twitter.com/1/statuses/mentions.json?count=200&callback=?", callback);	
 	};
 	
 	this.showFavorites = function(userId, callback) {
 		var url = this.protocol + "api.twitter.com/1/favorites.json?count=200&callback=?";
 		if (userId)
 			url += "&id=" + userId
-		$.getJSON(url, callback);
-		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback)	
+		$.getJSON(url, callback);		
 	};
 	
 	this.showHashTag = function(hashTag, callback) {
 		$.getJSON(this.protocol + "search.twitter.com/search.json?q=" + escape(hashTag) + "&callback=?", function(queryResponse) {
 			return callback(queryResponse.results, true);
-		});
-		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback)
+		});		
 	};
 	
 	this.showUserProfile = function(userId, userName, currentUser, callback) {
@@ -142,8 +132,7 @@ function JSONTwitterAPI(protocol, rateLimitCallback) {
 				+ userId + "&source_id=" + currentUser.id + "&callback=?", function(relation) {
 					callback(user, relation);
 				});		
-		});
-		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback);	
+		});				
 	};
 	
 	this.retweet = function(tweetId, callback) {	 
@@ -173,8 +162,7 @@ function JSONTwitterAPI(protocol, rateLimitCallback) {
 	
 	this.doSearch = function(callback) {				
 		$.getJSON(this.protocol + "search.twitter.com/search.json?q=" + escape(searchTerm) + 
-			"&callback=?", callback);
-		$.getJSON(this.RATE_LIMIT_STATUS_URL, this.rateLimitCallback);			
+			"&callback=?", callback);			
 	};
 	
 	this.sendTweet = function(tweetText, replyToId, callback) {
@@ -232,6 +220,10 @@ function JSONTwitterAPI(protocol, rateLimitCallback) {
 			callback(role, users);
 		});
 	};			
+	
+	this.updateRateLimitStatus = function(callback) {		
+		$.getJSON(this.RATE_LIMIT_STATUS_URL, callback);
+	};
 }
 
 var teapot = {
@@ -263,14 +255,15 @@ var teapot = {
 		$("#tweetlengthbox").html("140");	
 		$("#tweettextbox").bind("keyup click", teapot.handleTweetTextBoxChanged)
 		teapot.api.verifyCredentials(function(user) {			
-			teapot.currentUser = user;
-			$("#waitmessage").ajaxStart(function(){ $("#waitmessage").fadeIn("slow"); });
-			$("#waitmessage").ajaxStop(function(){ $("#waitmessage").fadeOut("slow"); });						
+			teapot.currentUser = user;			
+			$("#waitmessage").ajaxStart(function(){ $("#waitmessage").show(); });	
+			$("#waitmessage").ajaxStop(function(){ $("#waitmessage").hide(); });						
 			$("#waitmessage").ajaxError(function(event, request, options, thrownError){ 
 				console.log(event, request, options, thrownError);
 			});
+			window.setInterval("teapot.api.updateRateLimitStatus(teapot.renderRateLimitStatus)", 600000);			
 			$("#username").html(user.screen_name);					
-			teapot.showHomeTimeline();	 
+			teapot.showHomeTimeline();			 
 		});				
 	},
 	
