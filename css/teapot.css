@@ -5,7 +5,7 @@ body {
 }
 
 .pagecontents {
-	max-width:1000px;
+	max-width:800px;
 	min-width:620px;
 	margin: 30px auto;
 	border:10px solid #e5e5e5;
@@ -64,11 +64,11 @@ body {
 .menubar {
 	text-align:center;	
 	background-color:#e5e5e5;
-	padding:5px;		
+	padding:10px;		
 }
 
 .menuitem {
-	padding:2px;
+	padding:4px 10px;
 	font-weight:bold;
 	text-decoration:none;
 	border-left:1px solid #FFFFFF;
@@ -77,11 +77,10 @@ body {
 	border-bottom:1px solid #4D4D4D;
 }
 
-.highlightedMenuItem {
-	/* border-bottom:2px solid #4D4D4D; */
-	border-left:1px solid #FFFFFF;
+.highlightedMenuItem {	
+	border-left:1px solid #4D4D4D;
 	border-right:1px solid #FFFFFF;
-	border-top:1px solid #FFFFFF;
+	border-top:1px solid #4D4D4D;
 	border-bottom:1px solid #FFFFFF;	
 }
 
@@ -110,6 +109,10 @@ a:hover {
 
 .itemcontents.mytweet {
 	border-left:4px solid #00ff00; 	
+}
+
+.itemcontents.mouseover {
+	background-color:#f7f7f7;
 } 
 
 .avatar {

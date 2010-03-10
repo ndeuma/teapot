@@ -405,9 +405,11 @@ var teapot = {
 		else 
 			$("#contentarea").html(teapot.formatTweet(new Tweet(statuses, isSearchResult)));
 		$(".itemcontents").mouseenter(function (event) {
+			$(event.target).addClass("mouseover");
 			$(event.target).children(".tweetactions").fadeIn("fast");
 		});
 		$(".itemcontents").mouseleave(function (event) {
+			$(event.target).removeClass("mouseover");
 			$(event.target).children(".tweetactions").fadeOut("fast");
 		});			
 	},
@@ -427,6 +429,7 @@ var teapot = {
 			.attr("id", "_tweetcontents_" + tweet.getId())
 			.append($("<a>")
 				.attr("href", "javascript:teapot.showUserProfile('" + tweet.getUserId() + "', '" + tweet.getUserScreenName() + "')")
+				.attr("title", "Show " + tweet.getUserScreenName() + "'s user profile")
 				.append($("<img>")
 					.addClass("avatar")
 					.attr("src", tweet.getUserProfileImageUrl())
@@ -436,6 +439,7 @@ var teapot = {
 				.addClass("tweetusername")
 				.append($("<a>")
 					.attr("href", "javascript:teapot.showUserTimeline('" + tweet.getUserId() + "')")
+					.attr("title", "Show " + tweet.getUserScreenName() + "'s tweets")
 					.append(tweet.getUserScreenName()))
 				.append(" "))
 			.append($("<span>")
