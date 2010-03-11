@@ -253,7 +253,7 @@ var teapot = {
 	init : function(api) {
 		teapot.api = api;
 		$("#tweetlengthbox").html("140");	
-		$("#tweettextbox").bind("keyup click", teapot.handleTweetTextBoxChanged)
+		$("#tweettextbox").bind("keyup click change", teapot.handleTweetTextBoxChanged)
 		teapot.api.verifyCredentials(function(user) {			
 			teapot.currentUser = user;			
 			$("#waitmessage").ajaxStart(function(){ $("#waitmessage").show(); });	
@@ -338,7 +338,8 @@ var teapot = {
 	retweet : function(tweetId, userName) {		
 		// TODO: Store original tweet text locally  instead of fetching it again
 		teapot.api.showSingleTweet(tweetId, function(tweet) {			
-			$("#tweettextbox").val("RT @" + userName + " " + tweet.text).focus();		
+			$("#tweettextbox").val("RT @" + userName + " " + tweet.text).focus();
+			$("#tweettextbox").change();		
 		});						
 	},
 	
