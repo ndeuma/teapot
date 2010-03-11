@@ -335,9 +335,11 @@ var teapot = {
 		$("#tweettextbox").val("@" + userName + " ").focus();		
 	},
 	
-	retweet : function(tweetId) {
-		if (window.confirm("Retweet to your followers?"))
-			teapot.api.retweet(tweetId, teapot.handleTweetPosted);		
+	retweet : function(tweetId, userName) {		
+		// TODO: Store original tweet text locally  instead of fetching it again
+		teapot.api.showSingleTweet(tweetId, function(tweet) {			
+			$("#tweettextbox").val("RT @" + userName + " " + tweet.text).focus();		
+		});						
 	},
 	
 	fav : function(tweetId) {		
@@ -480,7 +482,8 @@ var teapot = {
 				.attr("height", "12")
 				.attr("alt", "Retweet")
 				.attr("title", "Retweet this tweet"))
-				.attr("href", "javascript:teapot.retweet('" + tweet.getId() + "')"));					
+				.attr("href", "javascript:teapot.retweet('" + tweet.getId() + "', '" + 
+					tweet.getUserScreenName() + "')"));					
 		}
 		tweetActions.append($("<a>").append($("<img>")
 				.addClass("tweetactionicon")
