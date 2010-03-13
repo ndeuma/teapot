@@ -28,6 +28,8 @@ var teapot = {
     currentTweetProperties : {
         replyToId : null
     },
+    
+    userTimeline : null,
 
     init : function(api) {
         teapot.api = api;
@@ -43,7 +45,24 @@ var teapot = {
             window.setInterval("teapot.api.updateRateLimitStatus(teapot.renderRateLimitStatus)", 
                 600000);            
             $("#username").html(user.screen_name);                    
-            teapot.showHomeTimeline();             
+            teapot.showHomeTimeline();
+            
+            /*
+            teapot.userTimeline = new PagedList(-1, $("#pagecontrols"),                 
+                function(page) {
+                    console.log("Fetching results for page " + page);
+                    if (page >= 5) {
+                        return null;
+                    } else {
+                        return "bla";    
+                    }
+                    
+                },
+                function(results) {
+                    console.log("Rendering: " + results);
+                });           
+            teapot.userTimeline.refresh();
+            */
         });                
     },
     

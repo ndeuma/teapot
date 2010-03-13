@@ -4,28 +4,25 @@
 		<link rel="stylesheet" href="../css/qunit.css" />
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>Unit Tests</title>
+        <style type="text/css">
+            .testdom { display:none; }
+        </style>
 		<script type="text/javascript" src="../libs/jquery-1.4.2.js"></script>
 		<script type="text/javascript" src="../libs/qunit.js" ></script>
 		<script type="text/javascript" src="../src/utils.js"></script>
+        <script type="text/javascript" src="../src/PagedList.js"></script>
 		<script type="text/javascript" src="../src/teapot.js"></script>
 		<script type="text/javascript">
 		$(function() {
-			function assertDisplay(expected, input) {
-				test(input, function() {
-					equals(teapot.replaceRegexps(input), expected)
-				});
-			}
-			
-			function assertMergeTo(h1, h2, expectedResult) {
-				var result = utils.mergeHashes(h1, h2);
-				for (var property in expectedResult)
-					equals(expectedResult.property, result.property);
-				for (var property in result)
-					equals(result.property, expectedResult.property);																	
-			}
-			
 			function testReplaceRegexps() {
 				module("testReplaceRegexps");
+                
+                function assertDisplay(expected, input) {
+                    test(input, function() {
+                        equals(teapot.replaceRegexps(input), expected)
+                    });
+                }
+                
 				with (teapot) {
 					assertDisplay(hashtagLink("#simple") + " example", "#simple example");		
 					assertDisplay("A " + hashtagLink("#simple") + " example", "A #simple example");
@@ -48,6 +45,14 @@
 			}
 			
 			function testMergeHashes() {
+                function assertMergeTo(h1, h2, expectedResult) {
+                    var result = utils.mergeHashes(h1, h2);
+                    for (var property in expectedResult)
+                        equals(expectedResult.property, result.property);
+                    for (var property in result)
+                        equals(result.property, expectedResult.property);                                                                   
+                }
+                
 				module("testMergeHashes");
 				test("Merge two non-empty hashes", function() {
 					assertMergeTo({ color : "blue", width : 20 }, { height : 40},
@@ -66,9 +71,108 @@
 						{ height : 40 });
 				});				
 			};
+            
+            function testPagedList() {
+                function assertNodeContents(controls, expectedControls, contents, expectedContents) {
+                    equals(controls.html(), expectedControls);
+                    equals(contents.html(), expectedContents);
+                }
+                
+                function testFinitePagedList() {
+                    var controlsNode = $("#testFinitePagedList_controls");
+                    var contentsNode = $("#testFinitePagedList_contents");
+                    var exceptionThrownAtLastPage = false;
+                    var exceptionThrownAtFirstPage = false;                
+                    var fetch = function(page) {
+                      return "page " + (page + 1);  
+                    };
+                    var render = function(contents) {
+                      contentsNode.html(contents);  
+                    };
+                    var list = new PagedList(3, controlsNode, fetch, render);
+                    list.refresh();
+                    assertNodeContents(controlsNode, "1/3", contentsNode, "page 1");                    
+                    list.pageForward();                
+                    assertNodeContents(controlsNode, "2/3", contentsNode, "page 2");                                                    
+                    list.pageForward();                
+                    assertNodeContents(controlsNode, "3/3", contentsNode, "page 3");                                                                   
+                    try {
+                        list.pageForward();    
+                    } catch (e) {
+                        exceptionThrownAtLastPage = true;       
+                    }
+                    ok(exceptionThrownAtLastPage, "Exception is thrown at last page");
+                    assertNodeContents(controlsNode, "3/3", contentsNode, "page 3");                                
+                    list.pageBack();                
+                    assertNodeContents(controlsNode, "2/3", contentsNode, "page 2");                    
+                    list.pageBack();                
+                    assertNodeContents(controlsNode, "1/3", contentsNode, "page 1");                    
+                    list.lastPage();
+                    assertNodeContents(controlsNode, "3/3", contentsNode, "page 3");                    
+                    list.firstPage();
+                    assertNodeContents(controlsNode, "1/3", contentsNode, "page 1");                    
+                    try {
+                        list.pageBack();    
+                    } catch (e) {
+                        exceptionThrownAtFirstPage = true;       
+                    }
+                    ok(exceptionThrownAtFirstPage, "Exception is thrown at first page");
+                    assertNodeContents(controlsNode, "1/3", contentsNode, "page 1");                
+                }
+                
+                function testInfinitePagedList() {
+                    var controlsNode = $("#testInfinitePagedList_controls");
+                    var contentsNode = $("#testInfinitePagedList_contents");
+                    var exceptionThrownAtLastPage = false;
+                    var exceptionThrownAtFirstPage = false;                
+                    var fetch = function(page) {                        
+                      return (page < 3) ? "page " + (page + 1) : null;  
+                    };
+                    var render = function(contents) {
+                      contentsNode.html(contents);  
+                    };
+                    var list = new PagedList(-1, controlsNode, fetch, render);
+                    list.refresh();
+                    assertNodeContents(controlsNode, "1", contentsNode, "page 1");                    
+                    list.pageForward();                
+                    assertNodeContents(controlsNode, "2", contentsNode, "page 2");                                                    
+                    list.pageForward();                
+                    assertNodeContents(controlsNode, "3", contentsNode, "page 3");                                                                                       
+                    list.pageForward();                                            
+                    assertNodeContents(controlsNode, "3", contentsNode, "page 3");                                
+                    list.pageBack();                
+                    assertNodeContents(controlsNode, "2/3", contentsNode, "page 2");                    
+                    list.pageBack();                
+                    assertNodeContents(controlsNode, "1/3", contentsNode, "page 1");                    
+                    list.lastPage();
+                    assertNodeContents(controlsNode, "3/3", contentsNode, "page 3");
+                    try {
+                        list.pageForward();    
+                    } catch (e) {
+                        exceptionThrownAtLastPage = true;       
+                    }
+                    ok(exceptionThrownAtLastPage, "Exception is thrown at last page");
+                    assertNodeContents(controlsNode, "3/3", contentsNode, "page 3");                                        
+                    list.firstPage();
+                    assertNodeContents(controlsNode, "1/3", contentsNode, "page 1");                    
+                    try {
+                        list.pageBack();    
+                    } catch (e) {
+                        exceptionThrownAtFirstPage = true;       
+                    }
+                    ok(exceptionThrownAtFirstPage, "Exception is thrown at first page");
+                    assertNodeContents(controlsNode, "1/3", contentsNode, "page 1");    
+                };
+                
+                module("testPagedList");
+                test("Navigation on finite PagedList", testFinitePagedList);
+                test("Navigation on infinite PagedList", testInfinitePagedList);
+            };
 			
+            
 			testMergeHashes();
-			testReplaceRegexps();												
+			testReplaceRegexps();
+            testPagedList();            												
 		});
 		</script>
 	</head>
@@ -77,5 +181,15 @@
 		<h2 id="qunit-banner"></h2>
  		<h2 id="qunit-userAgent"></h2>
  		<ol id="qunit-tests"></ol>
+        
+        <!-- testPagedList DOM -->
+        <span id="testFinitePagedList_controls" class="testdom">                               
+        </span>
+        <span id="testInfinitePagedList_controls" class="testdom">            
+        </span>
+        <span id="testFinitePagedList_contents" class="testdom">                               
+        </span>
+        <span id="testInfinitePagedList_contents" class="testdom">            
+        </span>
 	</body>
 </html>

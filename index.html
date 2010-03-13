@@ -13,6 +13,7 @@
 		<script type="text/javascript" src="src/logger.js"></script>
 		<script type="text/javascript" src="src/Tweet.js"></script>
 		<script type="text/javascript" src="src/JsonApi.js"></script>
+        <script type="text/javascript" src="src/PagedList.js"></script>
 		<script type="text/javascript" src="src/teapot.js"></script>		
 		<script type="text/javascript">
 		$(function() {						
@@ -46,6 +47,15 @@
 				<a title="Show replies to my tweets" id="mentions_timeline" class="menuitem" href="javascript:teapot.showMentions()">replies</a>
 				<a title="Show my favorites" id="favorites_timeline" class="menuitem" href="javascript:teapot.showFavorites()">favs</a>					
 				<a title="Search in Twitter" id="search_timeline" class="menuitem" href="javascript:teapot.doSearch()">search</a>
+                <!--                
+                <span id="pagecontrolscontainer">
+                    <a title="First page" id="page_first" class="menuitem" href="javascript:teapot.userTimeline.firstPage()">|&lt;</a>
+                    <a title="Move back" id="page_back" class="menuitem" href="javascript:teapot.userTimeline.pageBack()">&lt;</a>
+                    <span id="pagecontrols"></span>
+                    <a title="Move forward" id="page_forward" class="menuitem" href="javascript:teapot.userTimeline.pageForward()">&gt;</a>
+                    <a title="Last page" id="page_back" class="menuitem" href="javascript:teapot.userTimeline.lastPage()">&gt;|</a>
+                </span>
+                -->
 			</div>		
 			<div id="messagearea">
 			</div>	
