@@ -63,11 +63,7 @@
 				test("Merge hashes with duplicate keys", function() {
 					assertMergeTo({ height : 40 }, { height : 40 },
 						{ height : 40 });
-				});
-				test("teapot.js", function() {
-					assertMergeTo({ }, { suppress_response_codes : true },
-						{ suppress_response_codes : true });
-				});
+				});				
 			};
 			
 			testMergeHashes();
