@@ -1,6 +1,6 @@
 "use strict";
 
-/*global $: false, window: false, utils: false, Tweet: false, TrimPath: false */
+/*global $: false, utils: false */
 /*jslint browser: true, devel: true, undef: true, nomen: true, eqeqeq: true, strict: true, 
 newcap: true, immed: true, maxlen: 100 */
 
