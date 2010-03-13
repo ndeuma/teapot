@@ -30,13 +30,24 @@ var teapot = {
     },
     
     userTimeline : null,
+    
+    tweetTemplate : null,
+    
+    userTemplate : null,
+    
+    userProfileTemplate : null,
 
     init : function(api) {
         teapot.api = api;
         $("#tweetlengthbox").html("140");    
         $("#tweettextbox").bind("keyup click change", teapot.handleTweetTextBoxChanged);
         teapot.api.verifyCredentials(function(user) {            
-            teapot.currentUser = user;            
+            teapot.currentUser = user;
+            
+            tweetTemplate = TrimPath.parseDOMTemplate("template_tweet");
+            userTemplate = TrimPath.parseDOMTemplate("template_user");            
+            userProfileTemplate = TrimPath.parseDOMTemplate("template_user_profile");
+            
             $("#waitmessage").ajaxStart(function(){ $("#waitmessage").show(); });
             $("#waitmessage").ajaxStop(function(){ $("#waitmessage").hide(); });
             $("#waitmessage").ajaxError(function(event, request, options, thrownError){ 
@@ -122,7 +133,7 @@ var teapot = {
     
     showUserProfile : function(userId, userName) {
         teapot.api.showUserProfile(userId, userName, teapot.currentUser, function(user, relation) {
-            $("#contentarea").html(TrimPath.parseDOMTemplate("template_user_profile").process({
+            $("#contentarea").html(userProfileTemplate.process({
                 user : user,
                 relation : relation.relationship
             }));
@@ -194,10 +205,9 @@ var teapot = {
         teapot.highlightTimelineMenuItem(null);
     },
     
-    renderUsers : function(role, result) {
-        var template = TrimPath.parseDOMTemplate("template_user");        
+    renderUsers : function(role, result) {               
         $("#contentarea").html($.map(result.users, function(user) {
-            return template.process(user);
+            return userTemplate.process(user);
         }).join(""));
     },
     
@@ -224,90 +234,13 @@ var teapot = {
         $("#requestsremaining").html(status.remaining_hits + " API calls remaining.");
     },
     
-    formatTweet : function(tweet) {                
-        var dateTime = new Date(tweet.getCreatedAt());
-        var isMyTweet = tweet.getUserScreenName() === teapot.currentUser.screen_name;        
-        var authorClass = isMyTweet ? "mytweet" : "othertweet";
-        
-        var mainDiv = $("<div>")
-            .addClass("itemcontents").addClass(authorClass)
-            .attr("id", "_tweetcontents_" + tweet.getId())
-            .append($("<a>")
-                .attr("href", "javascript:teapot.showUserProfile('" + tweet.getUserId() + "', '" + 
-                    tweet.getUserScreenName() + "')")
-                .attr("title", "Show " + tweet.getUserScreenName() + "'s user profile")
-                .append($("<img>")
-                    .addClass("avatar")
-                    .attr("src", tweet.getUserProfileImageUrl())
-                    .attr("width", "40").attr("height", "40")
-                    .attr("alt", "Profile image of " + tweet.getUserScreenName())))
-            .append($("<span>")
-                .addClass("tweetusername")
-                .append($("<a>")
-                    .attr("href", "javascript:teapot.showUserTimeline('" + tweet.getUserId() + "')")
-                    .attr("title", "Show " + tweet.getUserScreenName() + "'s tweets")
-                    .append(tweet.getUserScreenName()))
-                .append(" "))
-            .append($("<span>")
-                .addClass("itemtext")
-                .append(teapot.replaceRegexps(tweet.getText()))
-                .append($("<br>")));
-        
-        var tweetMeta = $("<span>").addClass("smallitemtext")
-            .append($("<a>")
-                .attr("href", "javascript:teapot.showSingleTweet('" + tweet.getId() + "')")
-                .append(teapot.formatDateTime(dateTime, true)))
-            .append(" from ").append(tweet.getSource());        
-        if (tweet.getInReplyToStatusId() !== null) {
-            tweetMeta.append($("<a>").attr("href", "javascript:teapot.showSingleTweet('" +
-            tweet.getInReplyToStatusId() +
-            "')").append(" in reply to ").append(tweet.getInReplyToScreenName()));
-        }
-        tweetMeta.appendTo(mainDiv);                    
-
-        var tweetActions = $("<span>").addClass("tweetactions");
-        if (!isMyTweet) {
-            tweetActions.append($("<a>").append($("<img>")
-                .addClass("tweetactionicon")
-                .attr("src", "icons/reply.gif")
-                .attr("width", "12")
-                .attr("height", "12")
-                .attr("alt", "Reply")
-                .attr("title", "Reply to this tweet"))
-                .attr("href", "javascript:teapot.replyToTweet('" + tweet.getId() + "', '" + 
-                    tweet.getUserScreenName() + "')"));
-            tweetActions.append($("<a>")
-                .append($("<img>")
-                .addClass("tweetactionicon")
-                .attr("src", "icons/rt.gif")
-                .attr("width", "12")
-                .attr("height", "12")
-                .attr("alt", "Retweet")
-                .attr("title", "Retweet this tweet"))
-                .attr("href", "javascript:teapot.retweet('" + tweet.getId() + "', '" + 
-                    tweet.getUserScreenName() + "')"));                    
-        }
-        tweetActions.append($("<a>").append($("<img>")
-                .addClass("tweetactionicon")
-                .attr("src", "icons/fav.gif")
-                .attr("width", "12")
-                .attr("height", "12")
-                .attr("alt", "Favorite")
-                .attr("title", "Add this tweet to your favorites"))
-            .attr("href", "javascript:teapot.fav('" + tweet.getId() + "')"));
-        if (isMyTweet) {
-            tweetActions.append($("<a>").append($("<img>")
-                .addClass("tweetactionicon")
-                .attr("src", "icons/delete.gif")
-                .attr("width", "12")
-                .attr("height", "12")
-                .attr("alt", "Delete")
-                .attr("title", "Delete this tweet"))
-                .attr("href", "javascript:teapot.deleteTweet('" + tweet.getId() + "')"));
-        }
-        tweetActions.appendTo(mainDiv);                    
-                                                        
-        return utils.outerHtml(mainDiv);
+    formatTweet : function(tweet) {                                       
+        return tweetTemplate.process({
+            tweet : tweet,
+            authorClass : (tweet.getUserScreenName() === teapot.currentUser.screen_name) ?
+                "mytweet" : "othertweet",
+            dateTime : teapot.formatDateTime(new Date(tweet.getCreatedAt()), true)                
+        });        
     },
     
     formatDateTime : function(date, includeTime) {

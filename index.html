@@ -111,8 +111,7 @@
 						<td rowspan="8">
 							{if user.screen_name == teapot.currentUser.screen_name}
 								<p>
-								<b>This is you.</b> Obviously, you cannot follow, unfollow, or block 
-								yourself.
+								<b>This is you.</b>
 								</p>
 							{/if}							
 							{if user.protected}
@@ -192,6 +191,60 @@
 		</span>
 		<br clear="all" />
 	</div>
+</textarea>
+
+
+<textarea id="template_tweet" cols="0" rows="0" style="display:none;">
+    <div class="itemcontents ${authorClass}" id="_tweetcontents_${tweet.getId()}">
+        <a href="javascript:teapot.showUserProfile('${tweet.getUserId()}', '${tweet.getUserScreenName()}')"
+           title="Show ${tweet.getUserScreenName()}'s user profile">
+            <img class="avatar" src="${tweet.getUserProfileImageUrl()}" 
+                width="40" height="40"
+                alt="Profile image of ${tweet.getUserScreenName()}" />
+        </a>
+        <span class="tweetusername">
+            <a href="javascript:teapot.showUserTimeline('${tweet.getUserId}')"
+                title="Show ${tweet.getUserScreenName()}'s tweets">
+                ${tweet.getUserScreenName()}
+            </a>
+        </span>
+        <span class="itemtext">
+            ${teapot.replaceRegexps(tweet.getText())}<br />
+        </span>
+        <span class="smallitemtext">
+            <a href="javascript:teapot.showSingleTweet('${tweet.getId()}')">
+                ${dateTime}
+            </a>            
+            from ${tweet.getSource()}
+            {if tweet.getInReplyToStatusId() != null}
+                <a href="javascript:teapot.showSingleTweet('${tweet.getInReplyToStatusId()}')">
+                    in reply to ${tweet.getInReplyToScreenName()}    
+                </a>
+            {/if}
+        </span>
+        <span class="tweetactions">
+            {if authorClass !== "mytweet"}                
+                 <a href="javascript:teapot.replyToTweet('${tweet.getId()}', '${tweet.getUserScreenName()}')">
+                     <img class="tweetactionicon" src="icons/reply.gif" width="12" height="12"
+                        alt="Reply" title="Reply to this tweet" />
+                 </a>                 
+                 <a href="javascript:teapot.retweet('${tweet.getId()}', '${tweet.getUserScreenName()}')">
+                     <img class="tweetactionicon" src="icons/rt.gif" width="12" height="12"
+                        alt="Retweet" title="Retweet this tweet" />
+                 </a>   
+            {/if}       
+            <a href="javascript:teapot.fav('${tweet.getId()}')">
+                <img class="tweetactionicon" src="icons/fav.gif" width="12" height="12"
+                    alt="Favorite" title="Add this tweet to your favorites" />
+            </a>
+            {if authorClass === "mytweet"}
+                <a href="javascript:teapot.delete('${tweet.getId()}')">
+                    <img class="tweetactionicon" src="icons/delete.gif" width="12" height="12"
+                        alt="Delete" title="Delete this tweet" />
+                </a>    
+            {/if}           
+        </span>                
+    </div>
 </textarea>
 				
 	</body>
