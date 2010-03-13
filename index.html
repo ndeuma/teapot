@@ -67,7 +67,6 @@
 	</div>							
 						
 <!-- Templates for usage with TrimPath JavaScript Templates -->
-<!-- User profile -->
 <textarea id="template_user_profile" cols="0" rows="0" style="display:none;">				
 	<table class="userinfotable">
 		<tr>
@@ -203,7 +202,7 @@
                 alt="Profile image of ${tweet.getUserScreenName()}" />
         </a>
         <span class="tweetusername">
-            <a href="javascript:teapot.showUserTimeline('${tweet.getUserId}')"
+            <a href="javascript:teapot.showUserTimeline('${tweet.getUserId()}')"
                 title="Show ${tweet.getUserScreenName()}'s tweets">
                 ${tweet.getUserScreenName()}
             </a>
