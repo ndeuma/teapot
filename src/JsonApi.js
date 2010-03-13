@@ -151,11 +151,13 @@ function JsonApi(protocol, endpoint, searchEndpoint, errorCallback) {
     };
     
     this.follow = function(userId, userName, callback) {
+        this.userProfileCache[userId] = null;
         this.sendPostRequest(this.protocol + this.endpoint + "/1/friendships/create/" + 
             userId + ".xml", { screen_name : userName }, callback);
     };
     
     this.unfollow = function(userId, userName, callback) {
+        this.userProfileCache[userId] = null;
         this.sendPostRequest(this.protocol + this.endpoint + "/1/friendships/destroy/" + 
             userId + ".xml", { screen_name : userName }, callback);
     };
