@@ -145,21 +145,31 @@ function JsonApi(protocol, endpoint, searchEndpoint, errorCallback) {
             tweetId + ".xml", { }, callback);                
     };
     
-    this.deleteTweet = function(tweetId, callback) {        
+    this.deleteTweet = function(tweetId, callback) {
+        var api = this;               
         this.sendPostRequest(this.protocol + this.endpoint + "/1/statuses/destroy/" + 
-            tweetId + ".xml", { }, callback);
+            tweetId + ".xml", { }, function() {
+                api.tweetCache[tweetId] = null;
+                callback();
+            });
     };
     
     this.follow = function(userId, userName, callback) {
-        this.userProfileCache[userId] = null;
+        var api = this;        
         this.sendPostRequest(this.protocol + this.endpoint + "/1/friendships/create/" + 
-            userId + ".xml", { screen_name : userName }, callback);
+            userId + ".xml", { screen_name : userName }, function() {
+                api.userProfileCache[userId] = null;
+                callback();
+            });
     };
     
     this.unfollow = function(userId, userName, callback) {
-        this.userProfileCache[userId] = null;
+        var api = this;        
         this.sendPostRequest(this.protocol + this.endpoint + "/1/friendships/destroy/" + 
-            userId + ".xml", { screen_name : userName }, callback);
+            userId + ".xml", { screen_name : userName }, function() {
+                api.userProfileCache[userId] = null;
+                callback();
+            });
     };
     
     this.doSearch = function(searchTerm, callback) {                
