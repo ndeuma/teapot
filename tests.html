@@ -15,6 +15,14 @@
 				});
 			}
 			
+			function assertMergeTo(h1, h2, expectedResult) {
+				var result = Utils.mergeHashes(h1, h2);
+				for (var property in expectedResult)
+					equals(expectedResult.property, result.property);
+				for (var property in result)
+					equals(result.property, expectedResult.property);																	
+			}
+			
 			function testReplaceRegexps() {
 				module("testReplaceRegexps");
 				with (teapot) {
@@ -37,7 +45,33 @@
 					assertDisplay(urlLink("http://server?q=#hello"), "http://server?q=#hello");
 				}													
 			}
-			testReplaceRegexps();									
+			
+			function testMergeHashes() {
+				module("testMergeHashes");
+				test("Merge two non-empty hashes", function() {
+					assertMergeTo({ color : "blue", width : 20 }, { height : 40},
+						{ color : "blue", width : 20, height: 40 });	
+				});					
+				test("Merge non-empty and empty hash", function() {
+					assertMergeTo({ color : "blue", width : 20 }, { },
+						{ color : "blue", width : 20 });
+				});
+				test("Merge empty and non-empty hash", function() {
+					assertMergeTo({ }, { height : 40 },
+						{ height : 40 });
+				});
+				test("Merge hashes with duplicate keys", function() {
+					assertMergeTo({ height : 40 }, { height : 40 },
+						{ height : 40 });
+				});
+				test("teapot.js", function() {
+					assertMergeTo({ }, { suppress_response_codes : true },
+						{ suppress_response_codes : true });
+				});
+			};
+			
+			testMergeHashes();
+			testReplaceRegexps();												
 		});
 		</script>
 	</head>

@@ -12,7 +12,8 @@
 		<script type="text/javascript" src="libs/teapot.js"></script>		
 		<script type="text/javascript">
 		$(function() {						
-			teapot.init(new JsonApi("https://", "api.twitter.com", "search.twitter.com"));			
+			teapot.init(new JsonApi("https://", "api.twitter.com", "search.twitter.com", 
+				teapot.handleError));			
 		});
 		</script>
 	</head>

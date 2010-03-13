@@ -10,6 +10,15 @@ var Utils = {
 
 	guid : function() {
 		return (Utils.r() + Utils.r() + "-" + Utils.r() + "-" + Utils.r() + "-" + Utils.r() + "-" + Utils.r() + Utils.r() + Utils.r());
+	},
+	
+	mergeHashes : function(h1, h2) {
+		var h = {};
+		for (var key in h1)
+			h[key] = h1[key];
+		for (var key in h2)
+			h[key] = h2[key];
+		return h;	
 	}	
 };
 
@@ -64,7 +73,7 @@ function Tweet(tweet, isSearchResult) {
 }
 
 
-function JsonApi(protocol, endpoint, searchEndpoint) {
+function JsonApi(protocol, endpoint, searchEndpoint, errorCallback) {
 	
 	this.protocol = protocol;
 	
@@ -72,12 +81,31 @@ function JsonApi(protocol, endpoint, searchEndpoint) {
 	
 	this.searchEndpoint = searchEndpoint;
 	
+	this.errorCallback = errorCallback;
+	
 	this.RATE_LIMIT_STATUS_URL = function() {
 		return this.protocol + this.endpoint + "/1/account/rate_limit_status.json?callback=?";
 	};
+		
+	this.getJSON = function(url, data, callback) {		
+		var api = this;		
+		// Soft HTTP Error handling
+		$.getJSON(url, Utils.mergeHashes(data, { suppress_response_codes : true }), 
+			function(result) {				
+				if (result.error === "Could not authenticate you." || 
+					result.error === "This method requires authentication.")  
+					$.getJSON(url, data, callback);				
+				else if (result.error) {
+					$.event.trigger( "ajaxStop" );
+					api.errorCallback(result.error);
+				}
+				else 
+					callback(result);				
+			});
+	};
 	
 	this.verifyCredentials = function(callback) {
-		$.getJSON(this.protocol + this.endpoint + "/1/account/verify_credentials.json?callback=?", callback);
+		this.getJSON(this.protocol + this.endpoint + "/1/account/verify_credentials.json?callback=?", {}, callback);
 	};
 	
 	this.getTimeline = function(timelineType, userId, userName, callback) {
@@ -88,7 +116,7 @@ function JsonApi(protocol, endpoint, searchEndpoint) {
 			data["user_id"] = userId;
 		if (userName)
 			data["screen_name"] = userName;
-		$.getJSON(url, data, callback);					
+		this.getJSON(url, data, callback);					
 	};
 	
 	this.showPublicTimeline = function(callback) {
@@ -112,13 +140,13 @@ function JsonApi(protocol, endpoint, searchEndpoint) {
 	};
 	
 	this.showSingleTweet = function (tweetId, callback) {		
-		$.getJSON(this.protocol + this.endpoint + "/1/statuses/show/" + tweetId + 
-			".json?callback=?", callback);			
+		this.getJSON(this.protocol + this.endpoint + "/1/statuses/show/" + tweetId + 
+			".json?callback=?", {}, callback);			
 	};
 	
 	this.showMentions = function(callback) {
-		$.getJSON(this.protocol + this.endpoint + "/1/statuses/mentions.json?callback=?", 
-			callback, { "count" : 200 });	
+		this.getJSON(this.protocol + this.endpoint + "/1/statuses/mentions.json?callback=?", 
+			{ "count" : 200 }, callback);	
 	};
 	
 	this.showFavorites = function(userId, callback) {
@@ -126,11 +154,11 @@ function JsonApi(protocol, endpoint, searchEndpoint) {
 		var data = { "count" : 200};
 		if (userId)
 			data["id"] = userId;		
-		$.getJSON(url, data, callback);		
+		this.getJSON(url, data, callback);		
 	};
 	
 	this.showHashTag = function(hashTag, callback) {
-		$.getJSON(this.protocol + + this.searchEndpoint + "/search.json?callback=?",
+		this.getJSON(this.protocol + + this.searchEndpoint + "/search.json?callback=?",
 			{ "q" : hashTag }, 
 			function(queryResponse) {
 				return callback(queryResponse.results, true);
@@ -138,12 +166,11 @@ function JsonApi(protocol, endpoint, searchEndpoint) {
 	};
 	
 	this.showUserProfile = function(userId, userName, currentUser, callback) {
-		var proto = this.protocol;		
-		var endpoint = this.endpoint;
-		$.getJSON(proto + endpoint + "/1/users/show.json?callback=?",
+		var api = this;
+		api.getJSON(api.protocol + api.endpoint + "/1/users/show.json?callback=?",
 			{ "user_id" : userId}, 						
 			function(user) {				
-				$.getJSON(proto + endpoint + "/1/friendships/show.json?callback=?",
+				api.getJSON(api.protocol + api.endpoint + "/1/friendships/show.json?callback=?",
 					{ "source_id" : currentUser.id, "target_id" : userId},				 										
 					function(relation) {
 						callback(user, relation);
@@ -177,7 +204,7 @@ function JsonApi(protocol, endpoint, searchEndpoint) {
 	};
 	
 	this.doSearch = function(searchTerm, callback) {				
-		$.getJSON(this.protocol + this.searchEndpoint + "/search.json?callback=?",
+		this.getJSON(this.protocol + this.searchEndpoint + "/search.json?callback=?",
 			{ "q" : searchTerm }, 
 			callback);			
 	};
@@ -234,13 +261,14 @@ function JsonApi(protocol, endpoint, searchEndpoint) {
 			"screen_name" : userName,
 			"cursor" : cursor,			
 		}; 								
-		$.getJSON(url, data, function(users) {
+		this.getJSON(url, data, function(users) {
 			callback(role, users);
 		});
 	};			
 	
 	this.updateRateLimitStatus = function(callback) {		
-		$.getJSON(this.protocol + this.endpoint + "/1/account/rate_limit_status.json?callback=?", callback);
+		this.getJSON(this.protocol + this.endpoint + "/1/account/rate_limit_status.json?callback=?", 
+			{}, callback);
 	};
 }
 
@@ -614,6 +642,10 @@ var teapot = {
 			"So, no data is ever stored on www.niklas-deutschmann.de\n" +					
 			"Clear your browser login settings for logging in as a different user.\n\n" +
 			"Tested in Firefox 3.5 and Chrome 5 beta.");
+	},
+	
+	handleError : function(message) {
+		teapot.flashMessage(message);
 	}
 };
 
