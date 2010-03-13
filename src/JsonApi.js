@@ -14,6 +14,8 @@ function JsonApi(protocol, endpoint, searchEndpoint, errorCallback) {
     
     this.errorCallback = errorCallback;
     
+    this.tweetCache = {};
+    
     this.RATE_LIMIT_STATUS_URL = function() {
         return this.protocol + this.endpoint + "/1/account/rate_limit_status.json?callback=?";
     };
@@ -73,9 +75,17 @@ function JsonApi(protocol, endpoint, searchEndpoint, errorCallback) {
         this.getTimeline("user", null, userName, callback);            
     };
     
-    this.showSingleTweet = function (tweetId, callback) {        
-        this.getJSON(this.protocol + this.endpoint + "/1/statuses/show/" + tweetId + 
-            ".json?callback=?", {}, callback);            
+    this.showSingleTweet = function (tweetId, callback) {
+        var api = this;
+        if (api.tweetCache[tweetId]) {
+            callback(api.tweetCache[tweetId]);
+        } else {
+            this.getJSON(this.protocol + this.endpoint + "/1/statuses/show/" + tweetId + 
+                ".json?callback=?", {}, function(data) {
+                    api.tweetCache[tweetId] = data;
+                    callback(api.tweetCache[tweetId]);
+                });    
+        }                                 
     };
     
     this.showMentions = function(callback) {
