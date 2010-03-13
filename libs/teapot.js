@@ -158,7 +158,7 @@ function JsonApi(protocol, endpoint, searchEndpoint, errorCallback) {
 	};
 	
 	this.showHashTag = function(hashTag, callback) {
-		this.getJSON(this.protocol + + this.searchEndpoint + "/search.json?callback=?",
+		this.getJSON(this.protocol + this.searchEndpoint + "/search.json?callback=?",
 			{ "q" : hashTag }, 
 			function(queryResponse) {
 				return callback(queryResponse.results, true);
