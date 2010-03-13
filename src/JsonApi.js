@@ -16,6 +16,8 @@ function JsonApi(protocol, endpoint, searchEndpoint, errorCallback) {
     
     this.tweetCache = {};
     
+    this.userProfileCache = {};
+    
     this.RATE_LIMIT_STATUS_URL = function() {
         return this.protocol + this.endpoint + "/1/account/rate_limit_status.json?callback=?";
     };
@@ -112,15 +114,25 @@ function JsonApi(protocol, endpoint, searchEndpoint, errorCallback) {
     
     this.showUserProfile = function(userId, userName, currentUser, callback) {
         var api = this;
-        api.getJSON(api.protocol + api.endpoint + "/1/users/show.json?callback=?",
+        if (api.userProfileCache[userId]) {
+            callback(api.userProfileCache[userId].user, 
+                            api.userProfileCache[userId].relation);
+        } else {
+            api.getJSON(api.protocol + api.endpoint + "/1/users/show.json?callback=?",
             { "user_id" : userId},                         
             function(user) {                
                 api.getJSON(api.protocol + api.endpoint + "/1/friendships/show.json?callback=?",
                     { "source_id" : currentUser.id, "target_id" : userId},
-                    function(relation) {
-                        callback(user, relation);
+                    function(relation) {                        
+                        api.userProfileCache[userId] = {
+                            user : user,
+                            relation : relation  
+                        };                         
+                        callback(api.userProfileCache[userId].user, 
+                            api.userProfileCache[userId].relation);                                               
                     });        
-            });                
+            });    
+        }                        
     };
     
     this.retweet = function(tweetId, callback) {     
