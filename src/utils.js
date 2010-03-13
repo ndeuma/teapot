@@ -6,7 +6,7 @@ var utils = {
 
 	// From http://taiyolab.com/mbtweet
 	guid : function() {
-		return (Utils.r() + Utils.r() + "-" + Utils.r() + "-" + Utils.r() + "-" + Utils.r() + "-" + Utils.r() + Utils.r() + Utils.r());
+		return (utils.r() + utils.r() + "-" + utils.r() + "-" + utils.r() + "-" + utils.r() + "-" + utils.r() + utils.r() + utils.r());
 	},
 	
 	mergeHashes : function(h1, h2) {
