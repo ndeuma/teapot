@@ -184,7 +184,7 @@ function JsonApi(protocol, endpoint, searchEndpoint, errorCallback) {
 		var data = { 
 			"user_id" : userId,
 			"screen_name" : userName,
-			"cursor" : cursor,			
+			"cursor" : cursor			
 		}; 								
 		this.getJSON(url, data, function(users) {
 			callback(role, users);
