@@ -64,109 +64,126 @@ function Tweet(tweet, isSearchResult) {
 }
 
 
-function JSONTwitterAPI(protocol) {
+function JsonApi(protocol, endpoint, searchEndpoint) {
 	
 	this.protocol = protocol;
 	
-	this.RATE_LIMIT_STATUS_URL = "https://api.twitter.com/1/account/rate_limit_status.json?callback=?";
+	this.endpoint = endpoint;
 	
-	this.verifyCredentials = function(callback) {
-		$.getJSON(this.protocol + "api.twitter.com/1/account/verify_credentials.json?callback=?", callback);
+	this.searchEndpoint = searchEndpoint;
+	
+	this.RATE_LIMIT_STATUS_URL = function() {
+		return this.protocol + this.endpoint + "/1/account/rate_limit_status.json?callback=?";
 	};
 	
-	this.getTimelineUrl = function (timelineType, userId, userName) {
-		var result = this.protocol + "api.twitter.com/1/statuses/" + timelineType + "_timeline.json?count=200&callback=?";
+	this.verifyCredentials = function(callback) {
+		$.getJSON(this.protocol + this.endpoint + "/1/account/verify_credentials.json?callback=?", callback);
+	};
+	
+	this.getTimeline = function(timelineType, userId, userName, callback) {
+		var url = this.protocol + this.endpoint + "/1/statuses/" + timelineType + 
+			"_timeline.json?callback=?";
+		var data = { "count" : 200 };		
 		if (userId)
-			result += "&user_id=" + userId
-		if (userName)		
-			result += "&screen_name=" + userName		
-		return result;
+			data["user_id"] = userId;
+		if (userName)
+			data["screen_name"] = userName;
+		$.getJSON(url, data, callback);					
 	};
 	
 	this.showPublicTimeline = function(callback) {
-		$.getJSON(this.getTimelineUrl("public"), callback);	
+		this.getTimeline("public", null, null, callback);		
 	};
 	
 	this.showHomeTimeline = function(callback) {		
-		$.getJSON(this.getTimelineUrl("home"), callback);				
+		this.getTimeline("home", null, null, callback);				
 	};
 	
 	this.showMyTimeline = function(callback) {
-		this.showUserTimeline(null, callback);
+		this.getTimeline("user", null, null, callback);		
 	};
 	
-	this.showUserTimeline = function(userId, callback) {		
-		$.getJSON(this.getTimelineUrl("user", userId), callback);	
+	this.showUserTimeline = function(userId, callback) {				
+		this.getTimeline("user", userId, null, callback);	
 	};	
 	
 	this.showUserTimelineByName = function(userName, callback) {
-		$.getJSON(this.getTimelineUrl("user", null, userName), callback);			
+		this.getTimeline("user", null, userName, callback);			
 	};
 	
-	this.showSingleTweet = function (tweetId, callback) {
-		$.getJSON(this.protocol + "api.twitter.com/1/statuses/show/" + tweetId + ".json?callback=?", callback);			
+	this.showSingleTweet = function (tweetId, callback) {		
+		$.getJSON(this.protocol + this.endpoint + "/1/statuses/show/" + tweetId + 
+			".json?callback=?", callback);			
 	};
 	
 	this.showMentions = function(callback) {
-		$.getJSON(this.protocol + "api.twitter.com/1/statuses/mentions.json?count=200&callback=?", callback);	
+		$.getJSON(this.protocol + this.endpoint + "/1/statuses/mentions.json?callback=?", 
+			callback, { "count" : 200 });	
 	};
 	
 	this.showFavorites = function(userId, callback) {
-		var url = this.protocol + "api.twitter.com/1/favorites.json?count=200&callback=?";
+		var url = this.protocol + this.endpoint + "/1/favorites.json?callback=?";
+		var data = { "count" : 200};
 		if (userId)
-			url += "&id=" + userId
-		$.getJSON(url, callback);		
+			data["id"] = userId;		
+		$.getJSON(url, data, callback);		
 	};
 	
 	this.showHashTag = function(hashTag, callback) {
-		$.getJSON(this.protocol + "search.twitter.com/search.json?q=" + escape(hashTag) + "&callback=?", function(queryResponse) {
-			return callback(queryResponse.results, true);
-		});		
+		$.getJSON(this.protocol + + this.searchEndpoint + "/search.json?callback=?",
+			{ "q" : hashTag }, 
+			function(queryResponse) {
+				return callback(queryResponse.results, true);
+			});		
 	};
 	
 	this.showUserProfile = function(userId, userName, currentUser, callback) {
 		var proto = this.protocol;		
-		$.getJSON(proto + "api.twitter.com/1/users/show.json?user_id=" 
-			+ userId + "&callback=?", function(user) {				
-			$.getJSON(proto + "api.twitter.com/1/friendships/show.json?target_id=" 
-				+ userId + "&source_id=" + currentUser.id + "&callback=?", function(relation) {
-					callback(user, relation);
-				});		
-		});				
+		var endpoint = this.endpoint;
+		$.getJSON(proto + endpoint + "/1/users/show.json?callback=?",
+			{ "user_id" : userId}, 						
+			function(user) {				
+				$.getJSON(proto + endpoint + "/1/friendships/show.json?callback=?",
+					{ "source_id" : currentUser.id, "target_id" : userId},				 										
+					function(relation) {
+						callback(user, relation);
+					});		
+			});				
 	};
 	
 	this.retweet = function(tweetId, callback) {	 
-		this.sendPostRequest(this.protocol + "api.twitter.com/1/statuses/retweet/" + 
+		this.sendPostRequest(this.protocol+ this.endpoint + "/1/statuses/retweet/" + 
 			tweetId + ".xml", { }, callback);		
 	};
 	
 	this.fav = function(tweetId, callback) {		
-		this.sendPostRequest(this.protocol + "api.twitter.com/1/favorites/create/" + 
+		this.sendPostRequest(this.protocol + this.endpoint + "/1/favorites/create/" + 
 			tweetId + ".xml", { }, callback);				
 	};
 	
 	this.deleteTweet = function(tweetId, callback) {		
-		this.sendPostRequest(this.protocol + "api.twitter.com/1/statuses/destroy/" + 
+		this.sendPostRequest(this.protocol + this.endpoint + "/1/statuses/destroy/" + 
 			tweetId + ".xml", { }, callback);
 	};
 	
 	this.follow = function(userId, userName, callback) {
-		this.sendPostRequest(this.protocol + "api.twitter.com/1/friendships/create/" 
+		this.sendPostRequest(this.protocol + this.endpoint + "/1/friendships/create/" 
 			+ userId + ".xml", { screen_name : userName }, callback);
 	};
 	
 	this.unfollow = function(userId, userName, callback) {
-		this.sendPostRequest(this.protocol + "api.twitter.com/1/friendships/destroy/" 
+		this.sendPostRequest(this.protocol + this.endpoint + "/1/friendships/destroy/" 
 			+ userId + ".xml", { screen_name : userName }, callback);
 	};
 	
-	this.doSearch = function(callback) {				
-		$.getJSON(this.protocol + "search.twitter.com/search.json?q=" + escape(searchTerm) + 
-			"&callback=?", callback);			
+	this.doSearch = function(searchTerm, callback) {				
+		$.getJSON(this.protocol + this.searchEndpoint + "/search.json?callback=?",
+			{ "q" : searchTerm }, 
+			callback);			
 	};
 	
 	this.sendTweet = function(tweetText, replyToId, callback) {
-		this.sendPostRequest(this.protocol + "api.twitter.com/1/statuses/update.xml", {
+		this.sendPostRequest(this.protocol + this.endpoint + "/1/statuses/update.xml", {
 			"status" : tweetText, 
 			"in_reply_to_status_id" : replyToId
 		}, callback);			
@@ -211,18 +228,19 @@ function JSONTwitterAPI(protocol) {
 	};
 	
 	this.showUsers = function(role, userId, userName, cursor, callback) {
-		var url = this.protocol + "api.twitter.com/1/statuses/" + role + ".json?" + 
-			"user_id=" + userId +		
-			"&screen_name=" + userName +		
-			"&cursor=" + cursor +
-			"&callback=?";
-		$.getJSON(url, function(users) {
+		var url = this.protocol + this.endpoint + "/1/statuses/" + role + ".json?callback=?";
+		var data = { 
+			"user_id" : userId,
+			"screen_name" : userName,
+			"cursor" : cursor,			
+		}; 								
+		$.getJSON(url, data, function(users) {
 			callback(role, users);
 		});
 	};			
 	
 	this.updateRateLimitStatus = function(callback) {		
-		$.getJSON(this.RATE_LIMIT_STATUS_URL, callback);
+		$.getJSON(this.protocol + this.endpoint + "/1/account/rate_limit_status.json?callback=?", callback);
 	};
 }
 
