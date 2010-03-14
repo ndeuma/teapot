@@ -77,6 +77,10 @@ body {
 	border-bottom:1px solid #4D4D4D;
 }
 
+.menuitem.disabled {
+    border:1px solid red;
+}
+
 .highlightedMenuItem {	
 	border-left:1px solid #4D4D4D;
 	border-right:1px solid #FFFFFF;

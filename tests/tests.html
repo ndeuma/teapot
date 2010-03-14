@@ -94,6 +94,7 @@
                 function testFinitePagedList() {
                     var controlsNode = $("#testFinitePagedList_controls");
                     var contentsNode = $("#testFinitePagedList_contents");
+                    var buttonsNode = $("#testPagedList_buttons");
                     var exceptionThrownAtLastPage = false;
                     var exceptionThrownAtFirstPage = false;                
                     var fetch = function(page) {
@@ -102,7 +103,7 @@
                     var render = function(contents) {
                       contentsNode.html(contents);  
                     };
-                    var list = new PagedList(3, controlsNode, fetch, render);
+                    var list = new PagedList(3, controlsNode, buttonsNode, fetch, render);
                     list.refresh();
                     assertNodeContents(controlsNode, "1/3", contentsNode, "page 1");                    
                     list.pageForward();                
@@ -136,6 +137,7 @@
                 function testInfinitePagedList() {
                     var controlsNode = $("#testInfinitePagedList_controls");
                     var contentsNode = $("#testInfinitePagedList_contents");
+                    var buttonsNode = $("#testPagedList_buttons");
                     var exceptionThrownAtLastPage = false;
                     var exceptionThrownAtFirstPage = false;                
                     var fetch = function(page) {                        
@@ -144,7 +146,7 @@
                     var render = function(contents) {
                       contentsNode.html(contents);  
                     };
-                    var list = new PagedList(-1, controlsNode, fetch, render);
+                    var list = new PagedList(-1, controlsNode, buttonsNode, fetch, render);
                     list.refresh();
                     assertNodeContents(controlsNode, "1", contentsNode, "page 1");                    
                     list.pageForward();                
@@ -152,7 +154,7 @@
                     list.pageForward();                
                     assertNodeContents(controlsNode, "3", contentsNode, "page 3");                                                                                       
                     list.pageForward();                                            
-                    assertNodeContents(controlsNode, "3", contentsNode, "page 3");                                
+                    assertNodeContents(controlsNode, "3/3", contentsNode, "page 3");                                
                     list.pageBack();                
                     assertNodeContents(controlsNode, "2/3", contentsNode, "page 2");                    
                     list.pageBack();                
@@ -197,6 +199,8 @@
  		<ol id="qunit-tests"></ol>
         
         <!-- testPagedList DOM -->
+        <span id="testPagedList_buttons" class="testdom">                               
+        </span>
         <span id="testFinitePagedList_controls" class="testdom">                               
         </span>
         <span id="testInfinitePagedList_controls" class="testdom">            

@@ -59,9 +59,8 @@ var teapot = {
             teapot.showHomeTimeline();
             
             /*
-            teapot.userTimeline = new PagedList(-1, $("#pagecontrols"),                 
-                function(page) {
-                    console.log("Fetching results for page " + page);
+            teapot.userTimeline = new PagedList(-1, $("#pagecontrols"), $("#pagecontrolscontainer"),                 
+                function(page) {                
                     if (page >= 5) {
                         return null;
                     } else {
@@ -73,7 +72,7 @@ var teapot = {
                     console.log("Rendering: " + results);
                 });           
             teapot.userTimeline.refresh();
-            */
+            */            
         });                
     },
     
@@ -322,6 +321,7 @@ var teapot = {
     },
     
     highlightTimelineMenuItem : function(id) {
+        $("a[id$='tools']").removeClass("highlightedMenuItem");
         $("a[id$='_timeline']").removeClass("highlightedMenuItem");
         if (id) {
             $(id).addClass("highlightedMenuItem");
