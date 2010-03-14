@@ -237,7 +237,7 @@
                     alt="Favorite" title="Add this tweet to your favorites" />
             </a>
             {if authorClass === "mytweet"}
-                <a href="javascript:teapot.delete('${tweet.getId()}')">
+                <a href="javascript:teapot.deleteTweet('${tweet.getId()}')">
                     <img class="tweetactionicon" src="icons/delete.gif" width="12" height="12"
                         alt="Delete" title="Delete this tweet" />
                 </a>    
