@@ -211,14 +211,12 @@ var teapot = {
     },
     
     renderStatuses : function(statuses, isSearchResult) {
-        // statuses is a list of tweets
-        if (statuses.length !== undefined) {
-            $("#contentarea").html($.map(statuses, function(status) {                
-                return teapot.formatTweet(new Tweet(status, isSearchResult));
-            }).join(""));
-        } else {
-            $("#contentarea").html(teapot.formatTweet(new Tweet(statuses, isSearchResult)));
-        }
+        var wrapAndFormat = function(status) {
+            return teapot.formatTweet(new Tweet(status, isSearchResult));
+        };
+        
+        var html = teapot.api.mapStatuses(statuses, wrapAndFormat).join("");
+        $("#contentarea").html(html);        
         $(".itemcontents").mouseenter(function (event) {
             $(event.target).addClass("mouseover");
             $(event.target).children(".tweetactions").fadeIn("fast");

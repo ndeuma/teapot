@@ -39,6 +39,14 @@ function JsonApi(protocol, endpoint, searchEndpoint, errorCallback) {
             });
     };
     
+    this.mapStatuses = function(statuses, func) {
+        if (statuses.length !== undefined) {
+            return $.map(statuses, func);
+        } else {
+            return Array(func(statuses));
+        }
+    };
+    
     this.verifyCredentials = function(callback) {
         this.getJSON(this.protocol + this.endpoint + 
             "/1/account/verify_credentials.json?callback=?", {}, callback);
@@ -54,7 +62,13 @@ function JsonApi(protocol, endpoint, searchEndpoint, errorCallback) {
         if (userName) {
             data.screen_name = userName;
         }
-        this.getJSON(url, data, callback);                    
+        var api = this;
+        this.getJSON(url, data, function(statuses) {
+            api.mapStatuses(statuses, function(status) {
+                api.tweetCache[status.id] = status;
+            });
+            callback(statuses);
+        });                    
     };
     
     this.showPublicTimeline = function(callback) {
