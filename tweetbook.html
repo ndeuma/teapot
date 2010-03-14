@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Your life in tweets</title>
+        <link rel="stylesheet" type="text/css" href="css/tweetbook.css" title="default "/>        
+        <script type="text/javascript" src="libs/jquery-1.4.2.js"></script>     
+        <script type="text/javascript" src="libs/jquery-ui-1.8rc2.js"></script>
+        <script type="text/javascript" src="libs/trimpath-template-1.0.38.js"></script>
+        <script type="text/javascript" src="src/utils.js"></script>
+        <script type="text/javascript" src="src/logger.js"></script>
+        <script type="text/javascript" src="src/Tweet.js"></script>
+        <script type="text/javascript" src="src/JsonApi.js"></script>
+        <script type="text/javascript" src="src/PagedList.js"></script>
+        <script type="text/javascript" src="src/tweetbook.js"></script>        
+        <script type="text/javascript">
+        $(function() {                      
+            api = new JsonApi("https://", "api.twitter.com", "search.twitter.com", function(error) {
+                alert(error);
+            });           
+            tweetbook.fetchTweets(api);            
+        });
+        </script>
+    </head>
+    <body>  
+        <h1>Your life in tweets</h1>              
+        <div id="bookcontents" />            
+    </body>
+</html>

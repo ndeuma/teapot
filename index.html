@@ -47,6 +47,7 @@
 				<a title="Show replies to my tweets" id="mentions_timeline" class="menuitem" href="javascript:teapot.showMentions()">replies</a>
 				<a title="Show my favorites" id="favorites_timeline" class="menuitem" href="javascript:teapot.showFavorites()">favs</a>					
 				<a title="Search in Twitter" id="search_timeline" class="menuitem" href="javascript:teapot.doSearch()">search</a>
+                <a title="Various tools" id="tools" class="menuitem" href="javascript:teapot.showTools()">tools</a>
                 <!--                
                 <span id="pagecontrolscontainer">
                     <a title="First page" id="page_first" class="menuitem" href="javascript:teapot.userTimeline.firstPage()">|&lt;</a>
@@ -244,6 +245,13 @@
             {/if}           
         </span>                
     </div>
+</textarea>
+
+<textarea id="template_tools" cols="0" rows="0" style="display:none;">
+    <ul>
+        <a href="tweetbook.html">tweetbook</a><br />
+        My last 3200 tweets in a single document for printing or backup.
+    </ul>
 </textarea>
 				
 	</body>

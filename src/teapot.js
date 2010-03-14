@@ -328,6 +328,12 @@ var teapot = {
         }
     },
     
+    showTools : function() {
+        teapot.highlightTimelineMenuItem("#tools");
+        var toolsTemplate = TrimPath.parseDOMTemplate("template_tools");
+        $("#contentarea").html(toolsTemplate.process({}));  
+    },
+    
     showAbout : function() {
         alert("teapot (c) 2010, Niklas Deutschmann\n" +
             "teapot is written entirely in HTML, CSS and JavaScript and uses no server-side" + 
