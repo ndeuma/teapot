@@ -72,6 +72,19 @@
 				});				
 			};
             
+            function testParseDate() {
+                module("testParseDate");
+                test("Parse Twitter date: Sat Mar 13 23:45:52 +0000 2010", function() {
+                    var date = new Date("Sat Mar 13 23:45:52 +0000 2010");                    
+                    equals(date.getUTCFullYear(), 2010, "Full year");
+                    equals(date.getUTCMonth(), 2, "Month");                       
+                    equals(date.getUTCDate(), 13, "Day of month");
+                    equals(date.getUTCHours(), 23, "Hour");
+                    equals(date.getUTCMinutes(),45, "Minute");
+                    equals(date.getUTCSeconds(), 52, "Second");                    
+                });
+            };
+            
             function testPagedList() {
                 function assertNodeContents(controls, expectedControls, contents, expectedContents) {
                     equals(controls.html(), expectedControls);
@@ -172,6 +185,7 @@
             
 			testMergeHashes();
 			testReplaceRegexps();
+            testParseDate();
             testPagedList();            												
 		});
 		</script>
