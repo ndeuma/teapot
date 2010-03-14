@@ -58,7 +58,7 @@ var tweetbook = {
     },
     
     fetchTweets : function(api) {        
-        tweetbook.fetchTweetsFromPage(api, 2, 200, tweetbook.handleTweets);                   
+        tweetbook.fetchTweetsFromPage(api, 16, 200, tweetbook.handleTweets);                   
     },
     
     fetchTweetsFromPage : function(api, page, tweetsPerPage, finishCallback) {        
