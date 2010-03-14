@@ -62,7 +62,7 @@ var tweetbook = {
     },
     
     fetchTweetsFromPage : function(api, page, tweetsPerPage, finishCallback) {        
-        $.getJSON("https://api.twitter.com/1/statuses/user_timeline.json?callback=?", 
+        api.getJSON("https://api.twitter.com/1/statuses/user_timeline.json?callback=?", 
             { count : tweetsPerPage, page : page }, function(tweets) {
                 for (var i = tweetsPerPage - 1; i >= 0; i--) {
                     if (tweets[i])
