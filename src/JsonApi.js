@@ -194,7 +194,19 @@ function JsonApi(protocol, endpoint, searchEndpoint, errorCallback) {
     
     this.sendTweet = function(tweetText, replyToId, callback) {
         var url = this.protocol + this.endpoint + "/1/statuses/update.xml";
-        var api = this;
+		var api = this;		
+		
+		var data = {
+			"status" : tweetText, 
+            "in_reply_to_status_id" : replyToId
+		};
+		function tweetWithoutGeolocation() {
+			api.sendPostRequest(url, {
+               "status" : tweetText, 
+               "in_reply_to_status_id" : replyToId            
+            }, callback);
+		}
+		
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
                 api.sendPostRequest(url, {
@@ -203,12 +215,11 @@ function JsonApi(protocol, endpoint, searchEndpoint, errorCallback) {
                     "lat" : position.coords.latitude,
                     "long" : position.coords.longitude            
                 }, callback);        
-            });   
+            }, function() {
+				tweetWithoutGeolocation();
+			});   
         } else {
-            api.sendPostRequest(url, {
-               "status" : tweetText, 
-               "in_reply_to_status_id" : replyToId            
-            }, callback);
+            tweetWithoutGeolocation();
         }                    
     };
     
