@@ -2,6 +2,9 @@
     <description>A 100% HTML5 Twitter client</description>
     
     <!--
+    For example: ant -Ddest=user@host:/home/user/public_html/teapot -Dsshpass=
+    (you should read the value of sshpass from a file with restrictive permissions)
+    
     Needs the jsch libraries. Under Unbuntu 9.10, I did the following:
     * sudo apt-get install libjsch-java
     * cp /usr/share/java/jsch-0.1.42.jar ~/.ant/lib
