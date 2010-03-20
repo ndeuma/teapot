@@ -229,6 +229,7 @@ function JsonApi(protocol, endpoint, searchEndpoint, errorCallback) {
                                                 
         // Set up the form inside the post frame                                                
         var postForm = $("<form>")
+            .attr("accept-charset", "UTF-8")
             .attr("method", "post")
             .attr("action", url)
             .attr("target", targetFrameId);        
