@@ -26,7 +26,7 @@
 		<div class="pagecontents">
 			<div class="menubar">
 				User: <span id="username"></span> - 
-				<a class="menuitem" href="javascript:teapot.showAbout();">about</a> -
+				<a class="menuitem" href="#" onclick="teapot.showAbout();return false">about</a> -
 				<a class="menuitem" href="http://github.com/niklasdeutschmann/teapot" target="_blank">contribute</a>								
 			</div>
 			<div class="pagehead">															
@@ -40,22 +40,22 @@
 				</div>	
 			</div>
 			<div class="menubar">
-				<a title="Show tweets from the &quot;public&quot; timeline" id="public_timeline" class="menuitem" href="javascript:teapot.showPublicTimeline()">public</a> 
-				<a title="Show tweets of my friends" id="home_timeline" class="menuitem" href="javascript:teapot.showHomeTimeline()">home</a>  
-				<a title="Show my tweets" id="my_timeline" class="menuitem" href="javascript:teapot.showMyTimeline()">me</a>	
-				<a title="Show tweets of one user" id="user_timeline" class="menuitem" href="javascript:teapot.showAnyUserTimeline()">user</a>			
-				<a title="Show replies to my tweets" id="mentions_timeline" class="menuitem" href="javascript:teapot.showMentions()">replies</a>
-				<a title="Show my favorites" id="favorites_timeline" class="menuitem" href="javascript:teapot.showFavorites()">favs</a>					
-				<a title="Search in Twitter" id="search_timeline" class="menuitem" href="javascript:teapot.doSearch()">search</a>
-                <a title="Various tools" id="tools" class="menuitem" href="javascript:teapot.showTools()">tools</a>
+				<a title="Show tweets from the &quot;public&quot; timeline" id="public_timeline" class="menuitem" href="#" onclick="teapot.showPublicTimeline();return false">public</a> 
+				<a title="Show tweets of my friends" id="home_timeline" class="menuitem" href="#" onclick="teapot.showHomeTimeline();return false">home</a>  
+				<a title="Show my tweets" id="my_timeline" class="menuitem" href="#" onclick="teapot.showMyTimeline();return false">me</a>	
+				<a title="Show tweets of one user" id="user_timeline" class="menuitem" href="#" onclick="teapot.showAnyUserTimeline();return false">user</a>			
+				<a title="Show replies to my tweets" id="mentions_timeline" class="menuitem" href="#" onclick="teapot.showMentions();return false">replies</a>
+				<a title="Show my favorites" id="favorites_timeline" class="menuitem" href="#" onclick="teapot.showFavorites();return false">favs</a>					
+				<a title="Search in Twitter" id="search_timeline" class="menuitem" href="#" onclick="teapot.doSearch();return false">search</a>
+                <a title="Various tools" id="tools" class="menuitem" href="#" onclick="teapot.showTools();return false">tools</a>
                                 
                 <!--                                                            
                 <span id="pagecontrolscontainer">
-                    <a title="First page" id="pagecontrols_page_first" class="menuitem" href="javascript:teapot.userTimeline.firstPage()">|&lt;</a>
-                    <a title="Move back" id="pagecontrols_page_back" class="menuitem" href="javascript:teapot.userTimeline.pageBack()">&lt;</a>
+                    <a title="First page" id="pagecontrols_page_first" class="menuitem" href="#" onclick="teapot.userTimeline.firstPage();return false">|&lt;</a>
+                    <a title="Move back" id="pagecontrols_page_back" class="menuitem" href="#" onclick="teapot.userTimeline.pageBack();return false">&lt;</a>
                     <span id="pagecontrols"></span>
-                    <a title="Move forward" id="pagecontrols_page_forward" class="menuitem" href="javascript:teapot.userTimeline.pageForward()">&gt;</a>
-                    <a title="Last page" id="pagecontrols_page_last" class="menuitem" href="javascript:teapot.userTimeline.lastPage()">&gt;|</a>
+                    <a title="Move forward" id="pagecontrols_page_forward" class="menuitem" href="#" onclick="teapot.userTimeline.pageForward();return false">&gt;</a>
+                    <a title="Last page" id="pagecontrols_page_last" class="menuitem" href="#" onclick="teapot.userTimeline.lastPage();return false">&gt;|</a>
                 </span>
                 -->                
 			</div>		
@@ -100,7 +100,7 @@
 					<tr>
 						<td>Tweets</td>
 						<td>
-							<a href="javascript:teapot.showUserTimeline('${user.id}')">
+							<a href="#" onclick="teapot.showUserTimeline('${user.id}');return false">
 							${user.statuses_count}
 							</a>
 							&nbsp;
@@ -133,9 +133,9 @@
 								{/if}								
 								<ul class="useractionslist">									
 								{if relation.target.followed_by}											
-									<li><a href="javascript:teapot.unfollow('${user.id}', '${user.screen_name}')">Unfollow</a></li>
+									<li><a href="#" onclick="teapot.unfollow('${user.id}', '${user.screen_name}');return false">Unfollow</a></li>
 								{else}
-									<li><a href="javascript:teapot.follow('${user.id}', '${user.screen_name}')">Follow</a></li>
+									<li><a href="#" onclick="teapot.follow('${user.id}', '${user.screen_name}');return false">Follow</a></li>
 								{/if}																					
 								</ul>								
 							{/if}														
@@ -144,7 +144,7 @@
 					<tr>									
 						<td>Favorites</td>
 						<td>
-							<a href="javascript:teapot.showFavorites('${user.id}')">							
+							<a href="#" onclick="teapot.showFavorites('${user.id}');return false">							
 							${user.favourites_count}
 							</a>
 						</td>					
@@ -157,7 +157,7 @@
 					<tr>
 						<td>Friends</td>
 						<td>
-							<!-- <a href="javascript:teapot.showFriends('${user.id}', '${user.screen_name}', -1)"> -->
+							<!-- <a href="#" onclick="teapot.showFriends('${user.id}', '${user.screen_name}', -1);return false"> -->
 							${user.friends_count}
 							<!-- </a> -->
 						</td>
@@ -165,7 +165,7 @@
 					<tr>									
 						<td>Followers</td>
 						<td>
-							<!-- <a href="javascript:teapot.showFollowers('${user.id}', '${user.screen_name}', -1)"> -->
+							<!-- <a href="#" onclick="teapot.showFollowers('${user.id}', '${user.screen_name}', -1);return false"> -->
 							${user.followers_count}
 							<!-- </a> -->
 						</td>
@@ -178,12 +178,12 @@
 
 <textarea id="template_user" cols="0" rows="0" style="display:none;">
 	<div class="itemcontents" id="${id}">
-		<a href="javascript:teapot.showUserProfile('${id}', '${screen_name}')">			
+		<a href="#" onclick="teapot.showUserProfile('${id}', '${screen_name}');return false">			
 			<img class="avatar" src="${profile_image_url}" width="40" height="40"
 				alt="Profile image of ${screen_name}" />			
 		</a>
 		<span class="tweetusername">
-			<a href="javascript.teapot.showUserTimeline('${id}', '${screen_name}')">
+			<a href="#" onclick="teapot.showUserTimeline('${id}', '${screen_name}');return false">
 				${screen_name}
 			</a>
 		</span><br />		
@@ -197,14 +197,14 @@
 
 <textarea id="template_tweet" cols="0" rows="0" style="display:none;">
     <div class="itemcontents ${authorClass}" id="_tweetcontents_${tweet.getId()}">
-        <a href="javascript:teapot.showUserProfile('${tweet.getUserId()}', '${tweet.getUserScreenName()}')"
+        <a href="#" onclick="teapot.showUserProfile('${tweet.getUserId()}', '${tweet.getUserScreenName()}');return false"
            title="Show ${tweet.getUserScreenName()}'s user profile">
             <img class="avatar" src="${tweet.getUserProfileImageUrl()}" 
                 width="40" height="40"
                 alt="Profile image of ${tweet.getUserScreenName()}" />
         </a>
         <span class="tweetusername">
-            <a href="javascript:teapot.showUserTimeline('${tweet.getUserId()}')"
+            <a href="#" onclick="teapot.showUserTimeline('${tweet.getUserId()}');return false"
                 title="Show ${tweet.getUserScreenName()}'s tweets">
                 ${tweet.getUserScreenName()}
             </a>
@@ -213,33 +213,33 @@
             ${teapot.replaceRegexps(tweet.getText())}<br />
         </span>
         <span class="smallitemtext">
-            <a href="javascript:teapot.showSingleTweet('${tweet.getId()}')">
+            <a href="#" onclick="teapot.showSingleTweet('${tweet.getId()}');return false">
                 ${dateTime}
             </a>            
             from ${tweet.getSource()}
             {if tweet.getInReplyToStatusId() != null}
-                <a href="javascript:teapot.showSingleTweet('${tweet.getInReplyToStatusId()}')">
+                <a href="#" onclick="teapot.showSingleTweet('${tweet.getInReplyToStatusId()}');return false">
                     in reply to ${tweet.getInReplyToScreenName()}    
                 </a>
             {/if}
         </span>
         <span class="tweetactions">
             {if authorClass !== "mytweet"}                
-                 <a href="javascript:teapot.replyToTweet('${tweet.getId()}', '${tweet.getUserScreenName()}')">
+                 <a href="#" onclick="teapot.replyToTweet('${tweet.getId()}', '${tweet.getUserScreenName()}');return false">
                      <img class="tweetactionicon" src="icons/reply.gif" width="12" height="12"
                         alt="Reply" title="Reply to this tweet" />
                  </a>                 
-                 <a href="javascript:teapot.retweet('${tweet.getId()}', '${tweet.getUserScreenName()}')">
+                 <a href="#" onclick="teapot.retweet('${tweet.getId()}', '${tweet.getUserScreenName()}');return false">
                      <img class="tweetactionicon" src="icons/rt.gif" width="12" height="12"
                         alt="Retweet" title="Retweet this tweet" />
                  </a>   
             {/if}       
-            <a href="javascript:teapot.fav('${tweet.getId()}')">
+            <a href="#" onclick="teapot.fav('${tweet.getId()}');return false">
                 <img class="tweetactionicon" src="icons/fav.gif" width="12" height="12"
                     alt="Favorite" title="Add this tweet to your favorites" />
             </a>
             {if authorClass === "mytweet"}
-                <a href="javascript:teapot.deleteTweet('${tweet.getId()}')">
+                <a href="#" onclick="teapot.deleteTweet('${tweet.getId()}');return false">
                     <img class="tweetactionicon" src="icons/delete.gif" width="12" height="12"
                         alt="Delete" title="Delete this tweet" />
                 </a>    

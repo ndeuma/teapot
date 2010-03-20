@@ -272,7 +272,7 @@ var teapot = {
     },
     
     hashtagLink : function (hashtag) {
-        return '<a class="hashtag" href="javascript:teapot.showHashTag(\'' + hashtag + '\')">' + 
+        return '<a class="hashtag" href="#" onclick="teapot.showHashTag(\'' + hashtag + '\');return false">' + 
             hashtag + '</a>';    
     },
     
@@ -281,8 +281,8 @@ var teapot = {
     },
     
     userNameLink : function (userName) {
-        return '@<a class="username" href="javascript:teapot.showUserTimelineByName(\'' + 
-            userName + '\')">' + userName + '</a>';    
+        return '@<a class="username" href="#" onclick="teapot.showUserTimelineByName(\'' + 
+            userName + '\');return false">' + userName + '</a>';    
     },
     
     handleTweetTextBoxChanged : function(event) {
