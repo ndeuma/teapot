@@ -199,27 +199,19 @@ function JsonApi(protocol, endpoint, searchEndpoint, errorCallback) {
 		var data = {
 			"status" : tweetText, 
             "in_reply_to_status_id" : replyToId
-		};
-		function tweetWithoutGeolocation() {
-			api.sendPostRequest(url, {
-               "status" : tweetText, 
-               "in_reply_to_status_id" : replyToId            
-            }, callback);
-		}
+		};		
 		
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
-                api.sendPostRequest(url, {
-                    "status" : tweetText, 
-                    "in_reply_to_status_id" : replyToId,
+                api.sendPostRequest(url, utils.mergeHashes(data, {                    
                     "lat" : position.coords.latitude,
                     "long" : position.coords.longitude            
-                }, callback);        
+                }), callback);        
             }, function() {
-				tweetWithoutGeolocation();
+				api.sendPostRequest(url, data, callback);
 			});   
         } else {
-            tweetWithoutGeolocation();
+            api.sendPostRequest(url, data, callback);
         }                    
     };
     
