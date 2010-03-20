@@ -28,7 +28,8 @@ function JsonApi(protocol, endpoint, searchEndpoint, errorCallback) {
         $.getJSON(url, utils.mergeHashes(data, { suppress_response_codes : true }), 
             function(result) {                
                 if (result.error === "Could not authenticate you." ||
-                result.error === "This method requires authentication.") {
+                result.error === "This method requires authentication." ||
+				result.error === "Not authorized" ) {
                     $.getJSON(url, data, callback);
                 } else if (result.error) {
                     $.event.trigger("ajaxStop");
