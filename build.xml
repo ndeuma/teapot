@@ -1,0 +1,22 @@
+<project name="teapot" default="deploy" basedir=".">
+    <description>A 100% HTML5 Twitter client</description>
+    
+    <!--
+    Needs the jsch libraries. Under Unbuntu 9.10, I did the following:
+    * sudo apt-get install libjsch-java
+    * cp /usr/share/java/jsch-0.1.42.jar ~/.ant/lib
+    -->
+    <target name="deploy">        
+        <scp todir="${dest}" keyfile="${user.home}/.ssh/id_dsa" passphrase="${sshpass}">
+            <fileset dir=".">
+                <include name="index.html" />
+                <include name="tweetbook.html" />
+                <include name="css/*" />
+                <include name="icons/*" />
+                <include name="libs/*" />                
+                <include name="src/*" />
+                <include name="tests/*" />                
+            </fileset>
+        </scp>
+    </target>
+</project>
