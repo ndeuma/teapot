@@ -194,13 +194,13 @@ function JsonApi(protocol, endpoint, searchEndpoint, errorCallback) {
     
     this.sendTweet = function(tweetText, replyToId, callback) {
         var url = this.protocol + this.endpoint + "/1/statuses/update.xml";
-		var api = this;		
-		
-		var data = {
-			"status" : tweetText, 
+        var api = this;        
+        
+        var data = {
+            "status" : tweetText, 
             "in_reply_to_status_id" : replyToId
-		};		
-		
+        };        
+        
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
                 api.sendPostRequest(url, utils.mergeHashes(data, {                    
@@ -208,8 +208,8 @@ function JsonApi(protocol, endpoint, searchEndpoint, errorCallback) {
                     "long" : position.coords.longitude            
                 }), callback);        
             }, function() {
-				api.sendPostRequest(url, data, callback);
-			});   
+                api.sendPostRequest(url, data, callback);
+            });   
         } else {
             api.sendPostRequest(url, data, callback);
         }                    
