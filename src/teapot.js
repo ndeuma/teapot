@@ -227,7 +227,8 @@ var teapot = {
             $(event.target).removeClass("mouseover");
             $(event.target).children(".tweetactions").fadeOut("fast");
         });
-        teapot.updatemarker = statuses[0].id;
+        if(parseInt(statuses[0].id) > parseInt(teapot.updatemarker)) 
+        	teapot.updatemarker = statuses[0].id;
     },
     
     renderRateLimitStatus : function(status) {
