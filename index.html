@@ -196,7 +196,7 @@
 
 
 <textarea id="template_tweet" cols="0" rows="0" style="display:none;">
-    <div class="itemcontents ${authorClass}" id="_tweetcontents_${tweet.getId()}">
+    <div class="itemcontents ${authorClass} ${updateClass}" id="_tweetcontents_${tweet.getId()}">
         <a href="#" onclick="teapot.showUserProfile('${tweet.getUserId()}', '${tweet.getUserScreenName()}');return false"
            title="Show ${tweet.getUserScreenName()}'s user profile">
             <img class="avatar" src="${tweet.getUserProfileImageUrl()}" 

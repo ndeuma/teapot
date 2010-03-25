@@ -119,6 +119,10 @@ a:hover {
 	background-color:#f7f7f7;
 } 
 
+.itemcontents.updatemarker {
+	border-top:4px solid #e5e5e5;
+}
+
 .avatar {
 	float:left;
 	padding-right:1em;

@@ -36,6 +36,8 @@ var teapot = {
     userTemplate : null,
     
     userProfileTemplate : null,
+    
+    updatemarker : "0",
 
     init : function(api) {
         teapot.api = api;
@@ -224,7 +226,8 @@ var teapot = {
         $(".itemcontents").mouseleave(function (event) {
             $(event.target).removeClass("mouseover");
             $(event.target).children(".tweetactions").fadeOut("fast");
-        });            
+        });
+        teapot.updatemarker = statuses[0].id;
     },
     
     renderRateLimitStatus : function(status) {
@@ -236,7 +239,8 @@ var teapot = {
             tweet : tweet,
             authorClass : (tweet.getUserScreenName() === teapot.currentUser.screen_name) ?
                 "mytweet" : "othertweet",
-            dateTime : teapot.formatDateTime(new Date(tweet.getCreatedAt()), true)                
+            dateTime : teapot.formatDateTime(new Date(tweet.getCreatedAt()), true),
+            updateClass : (tweet.getId() === teapot.updatemarker) ? "updatemarker" : ""
         });        
     },
     
